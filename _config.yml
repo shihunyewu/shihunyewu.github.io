@@ -1,0 +1,96 @@
+# Site settings
+title: shihunyewu
+SEOTitle: shihunyewu的博客 | SHYW Blog
+header-img: img/post-bg-2015.jpg
+email: sgy.qingdao2014@gmail.com
+description: "前端|数据挖掘"
+keyword: "前端,shiihunyewu,博客, 个人网站, 互联网, Web"
+url: "https://shihunyewu.github.io/"              # your host, for absolute URL
+baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
+
+
+
+# SNS settings
+RSS: false
+weibo_username:     shihunyewu
+zhihu_username:     whowhatwhere
+github_username:    shihunyewu
+twitter_username:   shihunyewu
+#facebook_username:  huxpro
+#linkedin_username:  firstname-lastname-idxxxx
+
+
+
+# Build settings
+# from 2016, 'pygments' is unsupported on GitHub Pages. Use 'rouge' for highlighting instead.
+highlighter: rouge
+permalink: pretty
+paginate: 10
+exclude: ["less","node_modules","Gruntfile.js","package.json","README.md","README.zh.md"]
+anchorjs: true                          # if you want to customize anchor. check out line:181 of `post.html`
+
+
+
+# Gems
+# from PR#40, to support local preview for Jekyll 3.0
+gems: [jekyll-paginate]
+
+
+
+# Markdown settings
+# replace redcarpet to kramdown,
+# although redcarpet can auto highlight code, the lack of header-id make the catalog impossible, so I switch to kramdown
+# document: http://jekyllrb.com/docs/configuration/#kramdown
+markdown: kramdown
+kramdown:
+  input: GFM                            # use Github Flavored Markdown !important
+
+
+
+# Disqus settings
+disqus_username: sgy
+
+# Netease setttings
+netease_comment: false
+
+
+
+# Analytics settings
+# Baidu Analytics 
+# ba_track_id: [your track id]
+
+# Google Analytics
+ga_track_id: 'UA-49627206-1'            # Format: UA-xxxxxx-xx
+ga_domain: shihunyewu.me
+
+
+
+# Sidebar settings
+sidebar: true                           # whether or not using Sidebar.
+sidebar-about-description: "保持前进，<br>多听多看多学"
+sidebar-avatar: /img/img_sgy.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+
+
+
+# Featured Tags
+featured-tags: true                     # whether or not using Feature-Tags
+featured-condition-size: 1              # A tag will be featured if the size of it is more than this condition value
+
+
+
+# Progressive Web Apps
+chrome-tab-theme-color: "#000000"
+service-worker: true
+
+
+
+# Friends
+friends: [
+    {
+    #     title: "Su",
+    #     href: "http://su.gallery/"
+    # },{
+        title: "mickey0524",
+        href: "https://mickey0524.github.io/"
+    }
+]
