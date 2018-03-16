@@ -143,6 +143,103 @@ print arange
 		表示第二维自动计算  
 
 [未完待续](http://scipy.github.io/old-wiki/pages/Tentative_NumPy_Tutorial)
-	
+
+#### pandas
+
+1. pandas的两种数据结构，Series 和 DataFrames
+	* Series是一种一维对象，类似数组列表或者是表格中的一列
+		* 创建：
+			* 每个元素可以是任何元素
+			```python
+			# create a Series with an arbitrary list
+			s = pd.Series([7, 'Heisenberg', 3.14, -1789710578, 'Happy Eating!'])
+			s
+			```
+			0                7
+			1       Heisenberg
+			2             3.14
+			3      -1789710578
+			4    Happy Eating!
+			dtype: object
+			* 或者是给每个元素自定义一个索引
+			```python
+			s = pd.Series([7, 'Heisenberg', 3.14, -1789710578, 'Happy Eating!'],
+              index=['A', 'Z', 'C', 'Y', 'E'])
+			```
+			* 可以从由字典转换而来，字典的键就成了Series的索引
+			```python
+			d = {'Chicago': 1000, 'New York': 1300, 'Portland': 900, 'San Francisco': 1100,
+			 'Austin': 450, 'Boston': None}
+			cities = pd.Series(d)
+			cities
+			```
+	* DataFrames  
+	DataFrames是一种二维表格，行列组成。当然也可以将其想象成是很多个共享索引的Series对象
+		* 和csv数据的交互（xlsl类似）
+		```python
+		from_csv = pd.read_csv('mariano-rivera.csv') 
+		cols = ['num', 'game', 'date', 'team', 'home_away', 'opponent',
+        'result', 'quarter', 'distance', 'receiver', 'score_before',
+        'score_after']
+		no_headers = pd.read_csv('peyton-passing-TDs-2012.csv', sep=',', header=None,
+                         names=cols)
+		# 遇到没有指定列名的数据，可以在读之前指定列名
+		```
+		``` python
+			my_dataframe.to_csv('path_to_file.csv')s # 导出成.csv文件
+		```
+		
+		* 使用DataFrame
+			* movies.info()：显示读入的数据的信息
+			```
+			<class 'pandas.core.frame.DataFrame'>
+			Int64Index: 1682 entries, 0 to 1681
+			Data columns (total 5 columns):
+			movie_id              1682 non-null int64
+			title                 1682 non-null object
+			release_date          1681 non-null object
+			video_release_date    0 non-null float64
+			imdb_url              1679 non-null object
+			dtypes: float64(1), int64(1), object(3)
+			memory usage: 78.8+ KB
+			```
+			
+			这些输出主要说明一下几点：
+			
+				1. 这确实是一个DataFrame实例
+				2. 行的索引从 0 - (N-1)，N是数据的总行数
+				3. 一共有 1682 个实例对象
+				4. 数据有5列
+				5. 每一列的数据类型
+				6. 这些数据所占内存
+			* users.describe():描述数据特征
+			```python
+				       user_id	    age
+				count	943.000000	943.000000
+				mean	472.000000	34.051962
+				std	272.364951	12.192740
+				min	1.000000	7.000000
+				25%	236.500000	25.000000
+				50%	472.000000	31.000000
+				75%	707.500000	43.000000
+				max	943.000000	73.000000
+			```
+			
+			* pandas.DataFrame.plot
+				* 参数
+				1. data
+				2. x
+				3. y
+				4. kind:
+					* 'line' 线性图
+					* 'bar' 柱状图
+					* 'barth' 横向柱状图
+					* 'hist' 直方图
+					* 'kde' 曲线图
+					* 'pie' 饼状图
+					* 'scatter' 散点图
+
+[pandas's api](http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html#pandas.DataFrame)  
+[未完待续](http://www.gregreda.com/2013/10/26/working-with-pandas-dataframes/)	
 	
 
