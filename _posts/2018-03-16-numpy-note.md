@@ -4,7 +4,7 @@ title:      "Numpy-Pandas-Matplotlib-note"
 subtitle:   " \"Numpy-Pandas-Matplotlib\""
 date:       2018-03-16 11:11:11
 author:     "shihunyewu"
-header-img: "img/post-bg-2015.jpg"
+header-img: "img/post-bg-alitrip.jpg"
 catalog: false
 tags:
     - ML
@@ -84,7 +84,7 @@ print arange
 	a < 35
 	array([True, True, False, False], dtype=bool)
 	```
-	
+
 	* 矩阵操作，矩阵元素乘，点乘，相加，相减
 	```python
 	A = array( [[1,1],
@@ -100,14 +100,14 @@ print arange
 	array([[5, 4],
        [3, 4]])
 	```
-	
-	* 对数组求和，求最小值，求最大值  
+
+	* 对数组求和，求最小值，求最大值
 		* a.sum()
 		* a.min()
 		* a.max()
 		* a.sum(axis = 0) # 对每一列求和
 		* a.sum(axis = 1) # 对每一行求和
-		* a.cumsum(axis = 1)  
+		* a.cumsum(axis = 1)
 		  ```python
 			array([[ 0,  1,  3,  6],
 					[ 4,  9, 15, 22],
