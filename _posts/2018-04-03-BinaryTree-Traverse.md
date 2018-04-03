@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      "Seven-methods-traverse-binaryTree"
-subtitle:   " \"binaryTree-traverse\""
+title:      "Seven-Methods-Traverse-BinaryTree"
+subtitle:   " \"BinaryTree-Traverse\""
 date:       2018-04-03 11:11:11
 author:     "shihunyewu"
 header-img: "img/post-bg-unix-linux.jpg"
@@ -27,11 +27,17 @@ class Node:
 
 # 构造一棵树
 def construct_tree(treelist,i):
+	"""
+	:type treelist:List[Node] 用来创建二叉树的顺序表，比如[1,2,3,null,null,4,5]
+	:type i:int 待处理结点在顺序表中的索引
+	:rtype: Node
+	"""
     if i <len(treelist) and tree_list[i] != None:
         node = Node(treelist[i])
     else:
         return
-	# 使用顺序表存储的二叉树，根节点索引为0时，顺序表中的第 i 个元素的左孩子的索引为 2*i+1，右孩子的索引为2*i+1
+	# 使用顺序表存储的二叉树
+	# 根节点索引为0时，顺序表中的第 i 个元素的左孩子的索引为 2*i+1，右孩子的索引为2*i+2
     if 2*i+1<len(treelist):
         node.left = construct_tree(treelist,2*i+1)
     if 2*i+2<len(treelist):
