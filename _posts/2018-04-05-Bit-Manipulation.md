@@ -12,7 +12,7 @@ tags:
 
 > "寻找非重复元素"
 
-今天遇到的问题是给定一个数组，求数组中只出现一次的问题。
+随便Pick One，就 Pick 到了Single Number III。所以顺便将 Single Number I 和 Single Number II 也一起做了个总结。
 
 #### 136. Single Number
 [题目地址](https://leetcode.com/problems/single-number/description/)
@@ -40,6 +40,7 @@ class Solution(object):
 
 #### 260. Single Number III
 [题目地址](https://leetcode.com/problems/single-number-iii/description/)
+
 这个题目是 Single Number I 的进阶，该题目中，只出现一次的数字变成了两个，要求的也就是这两个数字。
 如果使用 Single Number I 中的方法，最后得到的 result_num 是待求数字 a 和 待求数字 b，这两个数字的异或结果。
 这个 result_num 中为 0 的二进制位是 a 和 b 相同的部分，为 1 的二进制位是 a 和 b 不同的部分。
@@ -83,6 +84,7 @@ class Solution(object):
 
 #### 137. Single Number II
 [题目地址](https://leetcode.com/problems/single-number-iii/description/)
+
 这道题目是将数组中数字的重复次数改成了三次。
 在网上看到其他人的思路是对数组中数字的相同一个二进制位求和之后对 3 取余，得到的余数就是只重复一次的数字的二进制位的结果。
 从这个思路看，其实 Single Number I 中的异或操作其实是对 2 取余。
