@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "JavaScript-Object-Oriented"
-subtitle:   " \"js-OO\""
+subtitle:   " \"js中面向对象的实现方法\""
 date:       2018-03-28 11:11:11
 author:     "shihunyewu"
 header-img: "img/post-bg-unix-linux.jpg"

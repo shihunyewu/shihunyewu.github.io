@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "Seven-Methods-Traverse-BinaryTree"
-subtitle:   " \"BinaryTree-Traverse\""
+subtitle:   " \"遍历二叉树的七种方法\""
 date:       2018-04-03 11:11:11
 author:     "shihunyewu"
 header-img: "img/post-bg-unix-linux.jpg"

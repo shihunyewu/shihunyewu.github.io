@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      "Python核心编程笔记"
-subtitle:   " \"Python-Basic\""
+title:      "Python-Note"
+subtitle:   " \"python核心编程学习笔记\""
 date:       2018-04-03 11:11:11
 author:     "shihunyewu"
 header-img: "img/post-bg-unix-linux.jpg"
@@ -318,4 +318,103 @@ zip(s,t)
 ```
 
 ##### ''' 应对特殊符号，比如 HTML 文本
+
+##### 列表赋值
+
+切片更新列表
+```python
+a = [1,2,3,4,5]
+a[1:3] = a[3:5] # a = [1,4,5,4,5]
+```
+
+##### 删除列表元素
+
+已知索引
+```python
+del aList[1]
+```
+不知索引，只知元素
+```python
+aList.remove('hh')
+# 如果有重名元素，那么按顺序删除第一个
+```
+已知索引，删除并返回该被删除对象
+```python
+aList.pop()
+```
+
+##### 连接操作符 +
+```python
+a = a + b
+```
+ '+' 操作符是将 a,b 两个列表重新组合成一个新的列表，然后赋值给 a，a 已经不再是原来的那个列表
+```python
+a.extend(b)
+```
+使用extend(),将 b 添加到了 a 的尾部，a 没有发生变化
+
+##### 列表解析
+
+```python
+[ i*2 for i in [1,2,3] # 输出 [1,4,9]
+```
+还可以带有判断
+```python
+[i for i in range(8) if i%2 == 0] # 输出 [0,2,4,6]
+```
+
+##### 内建函数之 sorted() 和 reversed()
+
+返回一个新的列表，而使用 aList.sort()，是就地排序
+
+##### 列表内建函数
+
+```python
+list.count(obj) # 返回对象 obj 在列表中出现的次数
+list.index(obj,i,j) # 在列表索引i 到 j之间，返回 list[k] = obj 的元素的索引 k
+list.insert(index,obj) # 向列表的 index 处添加元素 obj
+list.sort(func=None,key = None,reverse = False) # func是比较函数，key是func的参数，reverse = True，递减
+```
+
+##### 使用列表构建栈和队列
+
+* 构建栈  
+	
+	```python
+	aList.pop() # 出栈
+	aList.append() # 入栈
+	```
+* 构建队列  
+	
+	```python
+	aList.pop(0) # 出队
+	aList.append(0) # 入队
+	```
+
+##### 元组的不可变性
+
+元组不可变性和字符串的不可变性类似。
+
+虽然元组元素(指id值)不可变，但是元组中的元素是可变对象的，还是可以改变元素的所包含的元素，例如
+```python
+t = (['xyz',300],23,-102) # ['xyz',300]中的元素是可变的
+```
+
+##### 单元素元组
+
+```python
+a = ('xyz',) # 如果没有 ","，a 会被赋值成一个 "xyz" 字符串
+```
+
+##### 拷贝 Python 对象，浅拷贝和深拷贝
+
+* 浅拷贝  
+	当创建了一个对象 a，并将 a 赋值给了 b，只是将 a 这个引用复制给了 b，修改 b 引用的对象时，也就是在修改 a 引用的对象。
+* 深拷贝  
+	使用 copy 模块的 copy.deepcopy()
+	```python
+	import copy
+	b = copy.deepcopy(a) # 深拷贝
+	b = copy.copy(a) 	 # 浅拷贝
+	```
 

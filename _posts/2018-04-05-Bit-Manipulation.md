@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "寻找非重复元素"
+title:      "Find No-repeated Elements"
 subtitle:   " \"寻找非重复元素\""
 date:       2018-04-05 11:11:11
 author:     "shihunyewu"

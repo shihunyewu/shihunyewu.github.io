@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "Numpy-Pandas-Matplotlib-note"
-subtitle:   " \"Numpy-Pandas-Matplotlib\""
+subtitle:   " \"Numpy-Pandas-Matplotlib 笔记\""
 date:       2018-03-16 11:11:11
 author:     "shihunyewu"
 header-img: "img/post-bg-alitrip.jpg"

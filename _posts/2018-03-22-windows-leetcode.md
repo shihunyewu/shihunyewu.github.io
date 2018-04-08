@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      "windows-leetcode"
-subtitle:   " \"windows\""
+title:      "Windows-LeetCode"
+subtitle:   " \"LeetCode滑动窗口类题目\""
 date:       2018-03-22 11:11:11
 author:     "shihunyewu"
 header-img: "img/post-bg-unix-linux.jpg"
