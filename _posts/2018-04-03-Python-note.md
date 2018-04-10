@@ -417,4 +417,49 @@ a = ('xyz',) # 如果没有 ","，a 会被赋值成一个 "xyz" 字符串
 	b = copy.deepcopy(a) # 深拷贝
 	b = copy.copy(a) 	 # 浅拷贝
 	```
+    
+### 第七章 字典
 
+##### 创建字典
+
+```python
+dict2 = {'name':'earth','port':80}
+fdict = dict((['x',1],['y',2]))  # {'y': 2, 'x': 1}
+```
+从 Python2.3 开始可以用fromkeys()，来创建所有键值相同的字典
+```python
+ddict = {}.fromkeys(('x','y'),-1) # {'y': -1, 'x': -1}
+# 当然第二个参数是可选的，如果不设置，则默认将所有键值设置为 None
+```
+
+##### 遍历字典
+
+从Python2.2开始，不必在使用keys()方法先获得键值列表，直接使用迭代器访问
+```python
+for key in dict2:
+    print key,dict2[key]
+```
+
+##### 判断字典中是某个键
+
+has_key()方法（不推荐，将被放弃），使用 in 和 not in 操作符。
+
+其中因为字典的键的不可变性，因此列表和其他字典不可以作为键
+
+##### 删除字典中的元素
+
+```python
+del dict2['name'] # 删除键为'name'的条目
+dict2.clear()     # 删除 dict2 中所有的条目
+del dict2         # 删除整个 dict2
+dict2.pop('name') # 删除并返回键为 'name' 的条目
+```
+
+##### 字典相比于列表
+
+不支持拼接 和 重复
+
+
+##### 字典的比较
+
+字典的长度——> 字典的键 ——> 字典的值
