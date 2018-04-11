@@ -100,7 +100,7 @@ x,y = y,x # 方便地交换变量值
 6. 函数定义语句，函数功能描述和模块功能描述相似，通过 function.__doc__ 访问
 7. 主程序
 
-##### __name__ == '__main__'
+##### \_\_name\_\_ == '\_\_main\_\_'
 
 一般在每个模块文件的主程序位置都要加这样一个判断，表示只有该文件作为主程序运行时才会执行以下代码，否则作为模块导入文件的时候是不会执行的。
 
@@ -463,3 +463,220 @@ dict2.pop('name') # 删除并返回键为 'name' 的条目
 ##### 字典的比较
 
 字典的长度——> 字典的键 ——> 字典的值
+
+##### 映射类型相关的函数
+
+工厂函数被用来创建字典。可以传递一个容器对象作为参数。将容器对象中的组合转化成键和值。
+
+```python
+>>> dict(zip(('x', 'y'), (1, 2)))
+{'y': 2, 'x': 1}
+>>> dict([['x', 1], ['y', 2]])
+{'y': 2, 'x': 1}
+>>> dict([('xy'[i-1], i) for i in range(1,3)])
+{'y': 2, 'x': 1}
+```
+
+接受关键字或关键字参数字典
+
+```python
+dict(x = 1,y = 2)
+{'y':2,'x':1}
+```
+
+可以拷贝另一个字典
+
+```python
+dict9 = dict(**dict8)
+# 或者
+dict9 = dict8.copy()
+# 二者都是深度拷贝
+```
+
+##### 映射类型内建方法
+
+dict.upate(dict2) # 将字典 dict2 的 键-值对添加到字典 dict 中，添加dict中不存在的键值对，将dict和dict2同时存在的键值对，更新成dict2的值
+
+##### 键必须是可哈希的
+
+可变类型不可以做键，比如列表，字典等，属于不变类型的元组就可以做键
+
+##### 集合类型的创建
+
+集合类型只能使用工厂方法 set() 和 frozenset()来创建
+
+##### 更新集合
+
+```python
+s.add('z') # 将 z 添加到集合中
+s.update('pypi') # 将 'pypi' 更新到集合中，相当于做并
+s.remove('z') 	# 删除
+s -= set('pypi') # 做差运算
+del s # 删除整个集合
+```
+##### 集合类型操作符
+
+* 联合 | 
+	```python
+	z = s|t
+	# z 包含了 t 和 s 所有的元素
+	```
+* 交集 &
+* 差集 -
+* 对称分布，两个集合不属于对方的值的集合，也就是异或操作
+
+##### 混合集合类型操作
+
+如果左边集合是可变集合，右边集合是不可变集合，那么结果是可变结合。位置相反，结果相反。
+
+##### 集合类型操作符（仅用于可变集合）
+
+```python
+|=
+&=
+-=
+^=
+```
+
+##### 内建函数
+
+* set()和 frozenset()  
+	set() 生成可变集合，frozenset() 生成不可变集合。  
+	参数必须是可以迭代的，比如字符串，字典，列表，元组
+
+
+### 第八章 条件和循环
+
+##### 条件语句缩进解决了"悬挂else" 问题
+
+```c
+/* dangling-else in C */
+if (balance > 0.00)
+	if (((balance - amt) > min_bal) && (atm_cashout() == 1))
+		printf("Here's your cash; please take all bills.\n");
+else
+	printf("Your balance is zero or negative.\n");
+```
+上面的 else 语句会给人一种错觉，好像 else 是属于上面的 if 语句（其实是属于下面的 if）。而 python 的强制缩进就可以避免这种错觉。
+
+##### 使用字典来替代 switch 语句
+
+python 中不支持 switch 语句，但是可以用字典来作为 switch 的替代品。
+
+```python
+msgs = {'create': 'create item',
+'delete': 'delete item',
+'update': 'update item'}
+default = 'invalid choice... try again!'
+action = msgs.get(user.cmd, default) # 相当于 switch 做选择
+```
+
+##### 条件表达式
+
+X if C else Y，其中 X 和 Y 是两个待选的值，如果表达式 C 为 True，返回 X，否则返回 Y
+
+##### for 语句
+
+for语句可以遍历序列成员，可以用在列表解析 和 生成器表达式中，它会自动调用迭代器的next() 方法。其实其更像 shell 语句中的 foreach	
+
+##### for 用于迭代器类型
+
+迭代对象有一个 next() 方法，每次调用之后返回下一个条目，所有条目迭代完之后，迭代器引发 StopIteration 异常，终止循环，for 语句在内部调用 next() 并捕获异常。
+
+##### range()
+
+range(start,end,step = 1)，返回一个列表。每个列表元素 k 都满足，start \<= k \< end.
+
+range(start = 0,end, step = 1) # 报错，range() 不可以用过两个参数调用
+
+实际上，为了运行速度，python2.x 实现了一个 迭代器对象 xrange()，其只在 for 循环中有效，其不返回列表。在 python3.x 中，range() 替代了 xrange()，并删除了 xrange()这个函数。
+
+##### 与序列相关的内建函数
+
+sorted(),reversed().enumerate(),zip()，其中 sorted() 和 zip() 返回一个序列，另外两个函数返回一个迭代器(就是一个具有 next() 方法的对象，具有触发循环终止的能力)
+
+##### else 可以放到 while，for 之后
+
+##### 迭代器和 iter() 函数
+
+* 迭代器如何迭代？  
+	迭代器又一个 next() 方法的对象，而不是通过索引来计数。每次调用 next() 方法返回下一个元素。全部的条目迭代结束之后，会引发一个 StopIteration，表示迭代完成。
+
+* 迭代器的限制
+	* 不能向前移动
+	* 不能复制一个迭代器，如果想要再次迭代同个对象，需要重新建一个迭代器对象
+	
+* 使用迭代器
+
+```python
+>>> myTuple = (123, 'xyz', 45.67)
+>>> i = iter(myTuple)
+>>> i.next()
+123
+>>> i.next()
+'xyz'
+>>> i.next()
+45.67
+>>> i.next()
+Traceback (most recent call last):
+File "", line 1, in ?
+StopIteration
+```
+
+```python
+for i in seq:
+	do_something_to(i)
+# 实际上是这样工作的:
+fetch = iter(seq)
+while True:
+	try:
+		i = fetch.next()
+	except StopIteration:
+```
+
+##### 可变对象和迭代器
+
+在迭代可变对象时，修改迭代对象时不可取的。而迭代器就能够避免这种问题，一个序列的迭代器只记录当前到达的元素，如果在迭代时改变了元素，会报错。
+
+##### 创建迭代器
+
+iter(obj): obj 是一个序列
+
+iter(func,sentinel),用类来创建迭代器，重复调用func，直到迭代器下一个值为 sentinel
+
+##### 列表解析
+
+\[expr for iter_var in iterable\],其中 expr 是一个表达式
+
+\[expr for iter_var in iterable if cond_expr \],带 if 语句的 for 循环
+
+##### 生成器表达式 
+
+\(expr for iter_var in iterable if cond_expr\)
+
+它与列表解析非常相似，而且它们的基本语法基本相同;不过它并不真正创建数字列表,而是返回一个生成器，这个生成器在每次计算出一个条目后，把这个条目“产生”(yield)出来.生成器表达式使用了"延迟计算"(lazy evaluation)
+
+用到的时候，才会生成,举一个例子
+
+```python
+>>> s = [1,2,3]
+>>> t = [4,5,6]
+>>> x = ((i,j) for i in s for j in t)
+>>> for item in x:
+...     print(item)
+...
+(1, 4)
+(1, 5)
+(1, 6)
+(2, 4)
+(2, 5)
+(2, 6)
+(3, 4)
+(3, 5)
+(3, 6)
+```
+
+**生成器没有全部元素，只是每次计算下一个结果**
+
+
+### 第九章 文件和输入输出
