@@ -680,3 +680,145 @@ iter(func,sentinel),用类来创建迭代器，重复调用func，直到迭代�
 
 
 ### 第九章 文件和输入输出
+
+##### 工厂函数file()
+
+该函数和 open()效果相同，在想说明处理文件对象的时候使用 file(),让程序的语意更清楚明白
+
+##### 通用换行符支持(UNS)
+
+不同平台来表示行结束的符号是不同的，例如 \n,\r,或者 \r\n.当使用 rU 方式打开文件的时候，python 会将所有的行分隔符替换成 NEWLINE(\n)。这样按行读取的时候，兼容各种换行符。
+
+##### 处理行结束符
+
+使用read() 或 readlines() 时，Python 不会删除行结束符，如果不做任何操作，字符串中多一个换行符，像这样：
+```python
+One day
+
+Two day
+```
+推荐使用strip()方法去除首尾的空格和换行符(参数为空，默认去除空格和换行符，不为空时，去除首尾的参数，如 strip('0')，去除首尾的 '0')
+
+```python
+f = open('myFile','r')
+data = (line.strip() for line in f.readlines())
+for line in data:
+	print(line) # 行和行之间不会多一个换行符
+f.close()
+```
+
+##### 文件内移动
+
+seek() 和 C 语言中的 fseek()类似，有两个参数 offset(偏移量) 和 whence(从哪里开始，0 从文件开头，1 从当前位置，2 从结尾)
+
+##### 文件迭代
+
+因为新版本 python 中的 file 对象集成了 next() 方法，因此在按行输出的时候，可以直接这样写
+
+```python
+for line in f: # 而不必像以前的版本那样， for line in f.readlines()，二者效果相同
+	print(line.strip()) 
+```
+
+##### 文件对象的垃圾回收机制
+
+Python 垃圾收集机制也会在文件对象的引用计数将为 0 的时候，自动关闭文件。建议在用这个文件来赋值另一个文件对象之前关闭这个文件，如果不显式地关闭文件，很可能丢失输出缓存区的数据。
+
+可以使用 flush() 方法，直接将内部缓冲区中的数据立刻写入到文件中。
+
+##### 文件方法杂项
+
+print 方法默认给输出字符串的末尾添加了 '\\n'，如果想不输出这个换行符，可以
+```python
+print(s,) # 在参数最后添加一个 ,
+```
+
+不同平台的行分隔符不同，python 只要导入了 os 模块，以下这些变量都会被正确赋值
+
+```python
+linesep 用于在文件中分隔行的字符串
+sep 用来分隔文件路径名的字符串
+pathsep 用于分隔文件路径的字符串
+curdir 当前工作目录的字符串名称
+pardir (当前工作目录的)父目录字符串名称
+```
+
+##### truncate([size]) 截断文件
+
+默认从当前截断，输入 size 之后，将文件的前 size 部分截断，即删除 size 之后的部分
+
+##### 标准文件
+
+通过 sys模块 来访问三个标准文件 sys.stdin（标准输入，一般是键盘）,sys.stdout（标准输出，一般为到显示器的缓冲输出） 和 sys.stderr（标准错误，到屏幕的非缓冲输出），print 语句通常输出到 sys.stdout,raw_input() 通常输入到 sys.stdin。
+
+？？需要自己处理好换行符。。。
+
+##### 从 shell 中接收参数
+
+sys.argv，接收参数数组，python 中不设置 sys.argc （即参数个数）
+
+##### 文件系统
+
+有时候会使用 python 来管理一下文件，这时候会用到 os 这个模块的函数。
+
+* remove()/unlink 删除文件
+* rename() 重命名
+* walk() 找到目录树下的所有文件名，相当于递归遍历
+* chdir() 改变工作目录
+* listdir() 列出指定目录下的文件
+* getcwd()  返回当前工作目录
+* mkdir()/mkdirs()  创建目录/创建多层目录
+* rmdir() / removedirs() 删除目录/删除多层目录，只对空目录有效，当目录不为空时，采用 shutil.rmtree()来删除，或者配合 walk() 来删除，效果相同。
+
+os.path 模块中的路径访问函数
+
+* basename() 去掉目录路径，返回文件名，做爬虫时，用过
+* dirname() 去掉文件名，返回目录路径
+* join() 将分离的各部分组合成一个路径名
+* split() 返回(dirname(),basename())元组
+* splitdrive() 返回(dirvename,pathname) 元组，就是目录名和文件名
+* getsize() 返回文件的大小
+* exists() 指定路径是否存在
+* isabs() 路径是否为绝对路径
+* isdir() 指定路劲是否为目录
+* isfile 指定路径是否为文件
+* islink() 是否为符号链接
+* samefile() 是否指向同一个文件
+
+##### 永久存储
+
+python 真是服务周到，当编程者想保留一些信息的时候，又不想使用关系数据库管理系统，python 提供了在这种情景下使用的简单的永久性存储模块。当然，现在 python 已经内置了 SQLite 数据库，这个数据库也很方便。
+
+* pickle 和 marshal模块
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
