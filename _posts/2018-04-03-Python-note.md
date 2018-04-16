@@ -400,6 +400,12 @@ list.sort(func=None,key = None,reverse = False) # func是比较函数，key是fu
 t = (['xyz',300],23,-102) # ['xyz',300]中的元素是可变的
 ```
 
+##### 元组定义时，括号非必须
+
+```python
+s = '1','2','3' # 相当于 s = ('1','2','3')
+```
+
 ##### 单元素元组
 
 ```python
@@ -787,9 +793,214 @@ os.path 模块中的路径访问函数
 
 ##### 永久存储
 
-python 真是服务周到，当编程者想保留一些信息的时候，又不想使用关系数据库管理系统，python 提供了在这种情景下使用的简单的永久性存储模块。当然，现在 python 已经内置了 SQLite 数据库，这个数据库也很方便。
+python 真是服务周到，当编程者想保留一些信息的时候，又不想使用关系数据库管理系统，python 提供了在这种情景下使用的简单的永久性存储模块。当然，python 内置了不需要一个单独的服务器进程或操作的系统，并且不需要配置的关系数据库 SQLite，
+某些情况可以考虑使用 SQLite。
 
-* pickle 和 marshal模块
+* pickle 和 marshal 模块
+
+pickle 模块依托文本文件，使用二进制写入和读出方式保存的对象。下面是小例子：
+
+```python
+>>> import pickle
+>>> class Person:
+...     def __init__(self,n,a):
+...             self.name = n
+...             self.age = a
+...     def show(self):
+...             print(self.name,str(self.age))
+...
+>>> p1 = Person('bob',2)
+>>> p1.show()
+bob 2
+>>> f = open('p.txt','wb')	# 使用二进制写入方式
+>>> pickle.dump(p1,f,0)		# 将对象写入
+>>> f.close()
+>>> f = open('p.txt','rb')	# 使用二进制方式读
+>>> bb = pickle.load(f)		# 装载对象
+>>> bb.show()				# 执行对象的 show()
+bob 2
+>>> f.close()
+```
+
+marshal 用法和 pickle 类似
+
+
+### 第十章 错误和异常
+
+##### 检测异常
+
+try-except 语句和 try-finally 语句，或者是二者的复合语句，举个列子
+```python
+>>> try:
+...     f = open('ball','r')
+... except IOError as e: # 2.X版本支持 except IOError ,e: 这种写法，但是 3.X 不支持
+...     print(e)
+...
+[Errno 2] No such file or directory: 'ball'
+```
+
+##### 同时处理多个异常
+
+```python
+try:
+    client_obj.get_url(url)
+except (URLError, ValueError, SocketTimeout):
+    client_obj.remove_url(url)
+```
+
+##### 异常存在层级关系
+
+可以用基类来捕获所有异常，如
+```python
+try:
+    f = open(filename)
+except (FileNotFoundError, PermissionError):
+    pass
+```
+
+可以被重写为
+```python
+try:
+    f = open(filename)
+except OSError:
+    pass
+```
+因为 OSError 是 FileNotFoundError 和 PermissionError 异常的基类
+
+##### 捕获多个异常捕获
+
+```python
+try:
+    f = open('hh', 'r')
+except (FileNotFoundError, ValueError) as e: # 只捕获其中的一个异常就会执行下面的操作，所以二者只用一个 as e 就行了
+    print(e)
+```
+
+##### 可以基于状态码来做处理
+
+用更一般的异常类型的状态码来做更详细的区分
+
+```python
+import errno
+
+filename = 'hh'
+try:
+    f = open(filename)
+except OSError as e:
+    if e.errno == errno.ENOENT:
+        print('File not found')
+    elif e.errno == errno.EACCES:
+        print('Permission denied')
+    else:
+        print('Unexpected error: %d', e.errno)
+```
+
+##### 特别的异常优先
+
+当匹配多个异常时，尽量让更一般的错误在最后，如果更一般的异常包含了特殊性的异常，更一般的异常会首先匹配，这样后面的特殊性的异常就不会被匹配了。比如这样
+```python
+>>> try:
+...     f = open('missing')
+... except OSError:
+...     print('It failed')
+... except FileNotFoundError: # 不会被匹配，因为 OSError 包含了 FileNotFoundError
+...     print('File not found')
+```
+
+##### 所有异常的基类 Exception 捕获所有的异常
+
+##### 自定义异常
+
+创建自定义异常，让类来继承 Exception ,并书写判断条件，使用 raise 手动触发异常
+
+```python
+class RunError(Exception):
+    def __init__(self, message, status):
+        super().__init__(message, status)
+        self.message = message
+        self.status = status
+
+
+try:
+    i = 0
+    while True:
+        i += 1
+        if i > 100:
+            raise RunError(u'i 超过了 100', 0)  # 使用 raise 来触发自定义异常
+except RunError as e:
+    print(e.args) # 输出 ('i 超过了 100', 0) 异常将参数添加到 e.args 中
+```
+
+？？是否可以自动触发自定义异常
+
+##### python 没有往上层抛出异常
+
+##### else 子句
+
+没有检测到异常的时候，会运行 else 子句
+
+##### finally 子句
+
+无论异常是否发生，都会执行这段代码
+
+##### with 语句
+
+Python 对一些内建对象进行改进，加入了对上下文管理器的支持，可以用于 with 语句中，比如可以自动关闭文件、线程锁的自动获取和释放等。
+
+```python
+with open(r'somefileName') as somefile: 
+    for line in somefile:
+        print line 
+        # ...more code
+```
+
+上面这段代码相当于用下面的 try/finally 方式实现，with 只是实现了 finally 语句，没有捕获异常，如果有异常，运行时依旧会抛出。
+
+```python
+somefile = open(r'somefileName')
+try:
+    for line in somefile:
+        print line
+        # ...more code
+finally:
+    somefile.close()
+```
+
+已经加入对上下文管理协议支持的还有模块 threading、decimal 等
+
+文管理器要实现上下文管理协议所需要的 __enter__() 和 __exit__() 两个方法：
+[自定义上下文管理器](https://www.ibm.com/developerworks/cn/opensource/os-cn-pythonwith/)
+
+##### assert 断言
+
+assert 需要用 AssertionError 来捕获
+
+```python
+try:
+	assert 1==0
+except AssertionError:
+	print('不相等')
+```
+
+##### logging
+
+日志
+
+```python
+import logging
+logging.basicConfig(level=logging.INFO) # 可以配置日志等级，有DEBUG，INFO，WARNING，ERROR 等级别
+logging.info('n = %d' % n)
+```
+
+##### pdb 调试器
+
+pdb 调试器类似于 gdb 调试器
+
+
+### 第十一章 函数和函数式编程
+
+
+
 
 
 
