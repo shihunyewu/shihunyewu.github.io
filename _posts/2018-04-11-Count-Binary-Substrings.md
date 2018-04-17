@@ -10,7 +10,7 @@ tags:
     - LEETCODE
 ---
 
-> "这道题目不难，看到了很简洁的解法"
+> "这道题目不难，但是可以使用计数"
 
 #### 696. Count Binary Substrings
 [题目地址](https://leetcode.com/problems/count-binary-substrings/description/)
@@ -19,4 +19,5 @@ tags:
 
 比较合乎思维定式的思路就是每次碰到 s 中的字符 '1' 就开始前后延伸.
 
-> 其他代码更精简的实现版本不过是这种思路的一种异化。上面这种实现方式，可读性更强。
+
+
