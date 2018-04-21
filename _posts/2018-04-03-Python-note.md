@@ -1012,7 +1012,7 @@ foo(x = 42,y = 54)
 
 可以将一个元组或者字典作为参数数组传递给函数。
 ```python
-func(*tuple_grp_nonkw_args, **dict_grp_kw_args)
+func(*tuple_grp_nonkw_args, **dict_grp_kw_args) # 元组是一个 '*'，字典是两个 '*'
 ```
 
 ##### 前向引用
@@ -1024,7 +1024,62 @@ pyhton 不允许在函数声明之前，对其进行调用
 
 函数可以具有属性
 
-##### 内部函数
+##### 匿名函数与 lambda
+
+```python
+def Add2(x, y = 2):
+	return x + y
+# 等价于下面
+Add2 = lambda x, y=2:x + y
+```
+
+##### 回调函数的内置函数
+
+* reduce(函数名（参数1，参数2），可迭代对象)
+
+reduce() 函数会将数据集合中的所有数据进行累积，运行过程为，先将数据集合中前两个元素去除，放进函数，得到结果，将结果和第三个元素作为参数，调用函数，如此，依次调用，返回最终的结果
+
+```python
+from functools import reduce
+def add(x,y):
+	return x + y
+reduce(add,[1,2,3,4,5])   # 计算列表和
+```
+在 python3 中，reduce()函数已经从全局名字空间里移除了，现在被放置在 functools 中.
+
+* map(函数名，可迭代对象)
+
+第一个参数 function 以参数序列中的每个元素调用 function 函数，返回每次 function 函数返回值组成的新列表。其中 function 函数只有一个参数
+
+```python
+>>> def square(x):
+...     return x**2
+...
+>>> map(square,[1,2,3,4])
+<map object at 0x00000219B58BB080>   # python3 返回的是一个迭代器
+>>> s = map
+>>> s = map(square,[1,2,3,4])
+>>> for i in s:
+...     print(i)
+...
+1
+4
+9
+16
+>>>
+```
+
+* filter(函数名，可迭代对象)
+
+来过滤数据集合中的元素
+
+> 主要就是回调函数嘛
+
+##### 闭包
+
+
+
+
 
 
 
