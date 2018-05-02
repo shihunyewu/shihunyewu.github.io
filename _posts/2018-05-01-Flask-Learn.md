@@ -163,8 +163,8 @@ abort 不会讲控制权还给调用它的函数，而是抛出异常，将控�
 
 	* 拼接 html
 
-	```python
-	<!DOCTYPE html>
+	```html
+	<! DOCTYPE html >
 	<html lang="en">
 	<head>
 		<meta charset="UTF-8">
@@ -192,23 +192,23 @@ abort 不会讲控制权还给调用它的函数，而是抛出异常，将控�
 
 		1. 模板不支持多继承，也就是子模板中定义的块，不可能同时被两个父模板替换。
 		2. 模板中不能定义多个同名的块，子模板和父模板都不行，因为这样无法知道要替换哪一个部分的内容。
-		
+
 		另外，我们建议在”endblock”关键字后也加上块名，比如”{% endblock block_name %}”。虽然对程序没什么作用，但是当有多个块嵌套时，可读性好很多。
-		
+
 		如果父模板中的块里有内容不想被子模板替换怎么办？在 block 结构中使用 super()
-		
+
 		[jinja2模板的继承](http://www.bjhee.com/jinja2-block-macro.html)
 
 * 3.3 使用 Flask-Bootstrap 继承 Twitter Bootstrap
 	[Bootstrap](http://getbootstrap.com/)
-	
+
 	很强，从 Flask-Bootstrap 上继承了很多已经定义好了的 Block 块。
 
 
 * 3.4 链接
 url_for() 函数最简单的是以视图函数名作为参数，返回对应的URL。
 ```python
-url_for('index', page=2) 的返回结果是/\?page=2
+url_for('index', page=2) 的返回结果是/index?page=2
 ```
 
 * 3.5 静态文件
