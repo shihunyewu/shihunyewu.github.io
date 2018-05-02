@@ -100,7 +100,7 @@ abort 不会讲控制权还给调用它的函数，而是抛出异常，将控�
 	* 可以使用过滤器修改变量，比如
 	```html
 	<!-- 这里的 captitalize 是将值的首字母转换成大写，其他字母转换成小写字母 -->
-	Hello,{{name | capitalize}} 
+	Hello,{{name | capitalize}}
 	```
 	还有很多的可选操作
 * 3.1.3 控制结构
@@ -123,8 +123,8 @@ abort 不会讲控制权还给调用它的函数，而是抛出异常，将控�
 
 	* 支持宏
 	宏类似于函数
-	```python
-	<!-- 这里的 macro 是定义宏的关键字？ -->
+	```html
+	{% #这里的 macro 是定义宏的关键字？%}
 	{% macro render_comment(comment) %}
 		<li>{{ comment }}</li>
 	{% endmacro %}
@@ -133,14 +133,14 @@ abort 不会讲控制权还给调用它的函数，而是抛出异常，将控�
 	* 类似于模块调用
 
 	```python
-	<!-- macros.html -->
+	{% #macros.html%}
 	{% macro render_comment(comment) %}
 		<li>{{ comment }}</li>
 	{% endmacro %}
 	```
 
-	```python
-	<!-- index.html -->
+	```html
+	{% #index.html%}
 	<!DOCTYPE html>
 	<html lang="en">
 	<head>
@@ -148,11 +148,11 @@ abort 不会讲控制权还给调用它的函数，而是抛出异常，将控�
 		<title>Hello</title>
 	</head>
 	<body>
-	<!-- 改用引用别的模块中的函数 -->
+    {%# 改用引用别的模块中的函数%}
 	{% import 'macros.html' as macros %}
 	<ul>
 		{% for comment in comments %}
-			<!-- 像引入包一样引入模块，但是调用时要用现在的包名 -->
+        	{%# 像引入包一样引入模块，但是调用时要用现在的包名%}
 			{{ macros.render_comment(comment) }}
 		{% endfor %}
 	</ul>
@@ -171,8 +171,8 @@ abort 不会讲控制权还给调用它的函数，而是抛出异常，将控�
 		<title>Hello</title>
 	</head>
 	<body>
-	<!-- top.html 作为网站的头部 -->
-	{% include 'top.html' %} 
+    {%#  top.html 作为网站的头部 %}
+	{% include 'top.html' %}
 	{{ word|capitalize }}
 	{% if user %}
 		Hello,{{ user }}
@@ -208,7 +208,7 @@ abort 不会讲控制权还给调用它的函数，而是抛出异常，将控�
 * 3.4 链接
 url_for() 函数最简单的是以视图函数名作为参数，返回对应的URL。
 ```python
-url_for('index', page=2) 的返回结果是/?page=2
+url_for('index', page=2) 的返回结果是/\?page=2
 ```
 
 * 3.5 静态文件
