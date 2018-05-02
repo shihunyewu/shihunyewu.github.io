@@ -164,7 +164,6 @@ abort 不会讲控制权还给调用它的函数，而是抛出异常，将控�
 	* 拼接 html
 
 	```html
-	<! DOCTYPE html >
 	<html lang="en">
 	<head>
 		<meta charset="UTF-8">
@@ -208,7 +207,7 @@ abort 不会讲控制权还给调用它的函数，而是抛出异常，将控�
 * 3.4 链接
 url_for() 函数最简单的是以视图函数名作为参数，返回对应的URL。
 ```python
-url_for('index', page=2) 的返回结果是/index?page=2
+url_for('index', page=2) 的返回结果是/index？page=2
 ```
 
 * 3.5 静态文件
