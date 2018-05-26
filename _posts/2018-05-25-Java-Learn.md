@@ -134,3 +134,91 @@ tags:
 * 建议：
 	如果能够使用 synchronized 关键字，就尽量使用该关键字，如此能够减少代码量和出错数。
 
+* 同步阻塞
+	线程可以通过调动同步方法获得锁，例如
+    ```java
+    private Object lock = new Obejcet();
+    ...
+    public void transfer(int from, int to, int amount){
+    	...
+    	synchronized(lock){
+        	account[from] -= amount;
+            account[to] += amount;
+        }
+        ...
+    }
+    ```
+    * 分析：
+    	此处 lock 仅仅是用来使用每个 java 对象中持有的内部锁。使用对象的锁（该锁可以是内部锁）来实现原子操作，被称为客户端锁定。使用的前提是该对象中的所有原子操作也均是由内部锁来实现的，否则会出现问题，这是客户端锁定的脆弱之处。所以需要其他的机制来替代。
+
+* 监视器
+	锁和条件是面向函数，而监视器面向对象，监视器的最大的特点是该锁对对象所有的方法进行加锁。
+
+* Volatile 域
+	* 原因：
+		1. 多处理器的计算机能够暂时在寄存器或者本地内存缓冲器中保存内存中的值，多处理器的计算机处理多线程程序时，运行在不停的处理器上的线程可能在同一时刻从相同的内存地址中取到不同的值，因为该内存地址的值可以从不同的地方（例如寄存器或者是本地的内存缓冲器，而不是真正的内存中）取得。
+		2. 编译器可以改变指令执行顺序来使得吞吐量最大化。而指令重排的前提是单线程，只有当前线程可以修改内存中的值，但是现在的程序是面向多线程，会可能有多个线程来修改这个值。
+	1. [保证了不同线程对这个变量进行操作时的可见性，即一个线程修改了某个变量的值，这新值对其他线程来说是立即可见的。](https://www.cnblogs.com/dolphin0520/p/3920373.html)，保证了在 t 时刻，所有线程读取该变量的值均相同。
+	2. 禁止进行指令重排序。
+	3. 不提供原子性
+	```java
+    private volatile boolean done;
+    ```
+    > 如果对共享变量除了赋值之外不做其他操作，可以将这些变量声明为 volatile
+
+* final 变量
+	从多线程中安全地访问一个共享域，即这个域声明为 final 时。（将一个向量数组声明为final后，还是可以修改其中的内容，但是不可以重新让该变量名指向另一个向量数组）
+
+* 原子性
+	很多类提供给了原子方法，比如 java.util.concurrent.atomic.AtomicInteger类，提供了整数自增自减等操作，相似的还有 AtomicBoolean等
+
+* 死锁
+
+* 线程局部变量
+
+	* 原因：
+		因为并非所有的对象都是线程安全的，并发访问可能破坏对象中的数据结构
+	* 使用 ThreadLocal 辅助类为各个线程提供各自的实例
+	```java
+    // 可以使用以下代码
+    public static final ThreadLocal<SimpleDateFormat> dataFormat =
+    new ThreadLocal<SimpleDateFormat>()
+    {
+    	protected SimpleDateFormat initialValue(){
+        	return new SimpleDateFormat("yyyy-MM-dd");
+        }
+    };
+    ...
+    // 访问时使用
+    String dateStamp = dateFormat.get().format(new Date());
+    // 第一次调用时，会调用 initialValue 方法，此后 get方法 会返回属于当前线程的实例。
+    ```
+
+* 锁测试和超时
+	* tryLock 方法，试图申请一个锁，否则返回 false，然后线程可以去做其他的事情。
+	* 获得锁的过程中被中断
+		* Lock 方法不能被中断，当线程在尝试获得锁的时候被中断，中断线程在获得锁之前会一直处于阻塞状态。如果出现死锁，那么lock就无法终止。
+		* tryLock，带有超时参数的话，超时之后，其将在等待期间被中断，会抛出 InterruptedException 异常。
+		* lockInterruptibly 方法，相当于一个超时设为无限的 tryLock 方法。
+		* myCondition.await(100,TimeUnit.MILLISECONDS),等待一个条件的时候也可以设定超时时间。
+
+* 读写锁
+	* 适用场景：如果很多线程从给一个数据结构中读取数据而很少线程修改其中的数据
+	* 适用方式：
+	```java
+    	private ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
+        private Lock readLock = rwl.readLock();
+        private Lock writeLock = rwl.writeLock();
+    ```
+
+* 为何弃用 stop 方法和 suspend 方法
+	* stop 方法很不安全，调用 stop 方法时，该方法终止所有未结束的方法。当线程被终止，立即释放被它锁住的所有对象的锁，这会导致对象处于不一致的状态。
+	* suspend 挂起一个持有一个锁的线程时，那么该锁在恢复之前是不可用的，其他等待该锁的线程处于阻塞状态，程序死锁。
+
+##### 14.6 阻塞队列
+
+* 出现的原因：
+	作为一个高层的开发者，应该尽可能地远离底层构建块，应该尽可能使用并发处理的专业人士实现的较高层次的结构，这样更安全，更方便。
+* 特点：
+	生产者线程向队列插入元素，消费者线程从队列中取出，使用队列可以安全地从一个线程向另一个线程传递数据。该过程中不需要线程同步，因为队列已经保证了同步。
+
