@@ -69,16 +69,14 @@ tags:
 
 * 未捕获异常处理器
 	线程的 run 方法不能抛出任何被检测的异常，不被检测的异常会导致线程终止。实际上，在线程死亡之前，已经将异常传递到了用于未捕获异常的处理器。
-    * 具体处理
-    	* 处理器实现一个 Thread.UncaughtExceptionHandler 接口的类。实现其唯一方法
-    	```java
+    * 具体处理，处理器实现一个 Thread.UncaughtExceptionHandler 接口的类。实现其唯一方法
+	```java
         void uncaughtException(Thread t,Throwable e)// 使用 setUncaughtExceptionHandler方法为任何线程安装处理器
-        ```
-    * 默认处理器
-    	可以使用
-        ```java
+	```
+    * 默认处理器，可以使用
+	```java
         setDefaultUncaughtExceptionHandler 为所有线程安装一个默认的处理器，替换处理器可使用日志 api 发送未捕捉异常的报告到日志中。
-        ```
+	```
     * 不安装默认处理器
     	默认的处理器为空，不为独立的线程安装处理器，此时的处理器就是该线程的 ThreadGroup 对象。
 
