@@ -18,6 +18,7 @@ tags:
 |--------|--------|
 |    ArrayList    |   一种可以动态增长和缩减的索引序列     |
 |	LinkedList	  | 	一种可以在任何位置进行高效地插入和删除操作的有序序列 |
+|   Hashtable	  |  哈希表，同时保存键和值 |
 
 * 链表
 
@@ -79,6 +80,18 @@ ArrayList 类实现了 List 接口，封装了一个动态再分配的对象数�
 	* contains 快速在某个桶中查看元素是否已经存在
 
 * 树集（TreeSet类）
+	* 和 HashSet 的区别，TreeSet 顺序保存元素
+	* 可以通过实现 Comparable 接口来控制顺序
+
+* 队列和双端队列
+
+* 优先队列
+
+* 映射表
+	```java
+	Map<String,Employee> staff = new HashMap<>();
+	```
+
 
 
 ##### 14.2 中断线程
@@ -94,6 +107,7 @@ ArrayList 类实现了 List 接口，封装了一个动态再分配的对象数�
     	do more work;
     }
 ```
+
 
 ##### 14.3 线程状态
 
