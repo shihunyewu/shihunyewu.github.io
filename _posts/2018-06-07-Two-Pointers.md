@@ -7,7 +7,7 @@ author:     "shihunyewu"
 header-img: "img/post-bg-unix-linux.jpg"
 catalog: false
 tags:
-    - LeetCode
+    - LEETCODE
 ---
 
 > 双指针问题
