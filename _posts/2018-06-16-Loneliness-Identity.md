@@ -29,9 +29,9 @@ tags:
 
 ##### 参考
 
-(自我意识)[https://baike.baidu.com/item/%E8%87%AA%E6%88%91%E6%84%8F%E8%AF%86#3_1]
-(认同感)[https://baike.baidu.com/item/%E8%AE%A4%E5%90%8C%E6%84%9F]
-(当孤独时，怎么办)[https://jingyan.baidu.com/article/15622f247d9105fdfcbea539.html]
+[自我意识](https://baike.baidu.com/item/%E8%87%AA%E6%88%91%E6%84%8F%E8%AF%86#3_1)
+[认同感](https://baike.baidu.com/item/%E8%AE%A4%E5%90%8C%E6%84%9F)
+[当孤独时，怎么办](https://jingyan.baidu.com/article/15622f247d9105fdfcbea539.html)
 
 ##### 后记
 
