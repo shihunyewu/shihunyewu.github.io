@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "Loneliness-Identity"
-subtitle:   " \"Loneliness, Identity\""
+subtitle:   " \"孤独感, 认同感\""
 date:       2018-06-16 11:11:11
 author:     "shihunyewu"
 header-img: "img/post-bg-unix-linux.jpg"
