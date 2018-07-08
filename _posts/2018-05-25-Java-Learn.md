@@ -10,15 +10,17 @@ tags:
     - Java
 ---
 
-## 13 章 集合
+## 9 章 集合
 
-##### 13.2 具体的集合
+##### 9.2 具体的集合
 
 | 集合类型 | 描述 |
 |--------|--------|
 |    ArrayList    |   一种可以动态增长和缩减的索引序列     |
 |	LinkedList	  | 	一种可以在任何位置进行高效地插入和删除操作的有序序列 |
 |   Hashtable	  |  哈希表，同时保存键和值 |
+|	ArrayDeque	  | 双端队列，可以从两端入队出队 |
+|	Stack		| 栈 	|
 
 * 链表
 
@@ -89,11 +91,18 @@ ArrayList 类实现了 List 接口，封装了一个动态再分配的对象数�
 
 * 映射表
 	```java
-	Map<String,Employee> staff = new HashMap<>();
+	Map<String, Employee> staff = new HashMap<String, Employee>();
 	```
 
+* 栈(Stack)
+	* boolean empty()，测试栈是否为空
+	* Object peek(), 查看栈顶的元素，但是不删除
+	* Object pop(), 删除栈顶元素，并且删除
+	* Object push(Object), 将元素压入栈中
+	* int search(Object), 返回元素的位置
 
 
+## 14 章 线程
 ##### 14.2 中断线程
 
 * 默认终止条件：
