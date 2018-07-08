@@ -181,6 +181,6 @@ public class main {
 ```
 
 实现效果：
-![实现效果](../img/blog_img/Annotation.gif)
+![实现效果](img/blog_img/Annotation.gif)
 
 
