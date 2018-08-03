@@ -1,3 +1,4 @@
+---
 layout:     post
 title:      "Paper-Deadline"
 subtitle:   " \"论文\""
@@ -7,6 +8,8 @@ header-img: "img/post-bg-unix-linux.jpg"
 catalog: false
 tags:
     - 生活
+---
+
 > 打开GitHub 和 LeetCode，恍然发现自己已经差不多一个月没有登录过 GitHub  和 LeetCode了。
 
 #### 写在前面
