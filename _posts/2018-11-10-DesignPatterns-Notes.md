@@ -9,7 +9,7 @@ catalog: false
 tags:
     - DesignPatterns
 ---
-> 设计模式离我们并不遥远，JDK 实现，日常使用的框架中都有它的身影
+> 设计模式离我们并不遥远，JDK 实现以及日常使用的框架中都有它的身影
 
 ## 单例模式
 [参考](http://www.runoob.com/design-pattern/singleton-pattern.html)
