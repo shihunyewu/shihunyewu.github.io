@@ -84,5 +84,8 @@ class Solution {
 }
 ```
 
+#### 扩展
+假如数组中只有 4 种数字或者 n 种数字，也可以用平移来求解，当然如果 n 太大，不如直接排序。
+
 
 [参考](https://www.cnblogs.com/ganganloveu/p/3703746.html)
