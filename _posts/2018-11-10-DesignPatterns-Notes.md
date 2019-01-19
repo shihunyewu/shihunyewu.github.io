@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "DesignPatterns-Singleton"
+title:      "DesignPatterns-Note"
 subtitle:   " \"常用设计模式\""
 date:       2018-11-15 11:11:11
 author:     "shihunyewu"
