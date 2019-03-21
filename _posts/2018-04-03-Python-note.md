@@ -12,33 +12,31 @@ tags:
 
 > 我以前只系统地看过Python的菜鸟教程，而菜鸟教程中只介绍了最基本的语法知识
 > 在实际用Python的时候发现自己掌握的语法知识远远不够，现在开始看 Python 核心编程（第二版），希望对Python有个更深入的理解。
-> 还是看廖雪峰的 python 教程好些
-
-[TOC]
 
 ### 第二章
 
 ##### 乘方操作符
-	```python
-	2 ** 3 = 8
-	```
+```python
+2 ** 3 = 8
+```
 ##### for循环遍历
 
 发现有的人喜欢在遍历列表的时候，不仅遍历列表的元素，同时还得到相应的索引，这时就可以使用 enumerate函数
 
-	```python
+```python
 	for i,ch in enumerate(foo):
 		print ch,'(%d)'%i
-	```
-	结果：
-	```python
+```
+结果：
+```python
 	a(0)
 	b(1)
 	c(2)
-	```
+```
+
 ##### 错误和异常
 
-```
+```python
 try:
 	fielname = 'test.txt'
 	fobj = open(filename,'r')
@@ -49,7 +47,7 @@ except IOError,e:
 
 ##### 函数的默认参数
 
-```
+```python
 def foo(debug = True):
 	if debug:
 		print 'Hello World'
@@ -68,7 +66,7 @@ import sys; x = 'foo' ;
 
 但是不支持 x++ 或 ++x 这种前置/后置 自增/自减 运算符
 
-```
+```python
 x += 1
 ```
 
@@ -94,9 +92,9 @@ x,y = y,x # 方便地交换变量值
 每个 python 脚本文档应该有清晰的结构，推荐结构如下：
 1. 起始行，通常只在类 Unix 环境下使用，有起始行就能够仅输入脚本名字来执行脚本，无需直接调用解释器。
 2. 模块文档，介绍模块的功能和重要全局变量的含义，模块外可以通过 module.__doc__ 来访问，使用 help() 查阅模块功能的时候，也是显示的这些内容。
-	```python
-	"this is a test module"
-	```
+```python
+"this is a test module"
+```
 3. 模块导入语句
 4. 变量定义
 5. 类定义语句，类功能描述和模块功能描述相似，通过 class.__doc__ 访问
@@ -113,7 +111,7 @@ x,y = y,x # 方便地交换变量值
 
 python 和 java 类似，也是全权负责内存的管理，其中垃圾内存管理，使用变量的引用计数来作为指标，引用次数不大于 0，那么就将变量所占内存回收。
 * 增加引用计数
-```
+```python
 x = 3.14
 y = x # x 的引用次数加 1
 ```
@@ -203,7 +201,7 @@ file()
 
 ### 第五章 数字
 
-##### int(),round(),floor()区别
+##### int(), round(), floor() 的区别
 
 * int: 直接去除小数部分
 * round : 四舍五入
@@ -241,15 +239,15 @@ sequence[index]
 	```python
 	sequence[starting_index : ending_index]
 	```
-	如果 starting_index = 0，starting_index 可以省略
+	如果 ``starting_index = 0``，``starting_index`` 可以省略
 	```python
 	sequence[:ending_index]
 	```
-	同理如果 ending_index = len(sequence)-1,ending_index 也可以省略
+	同理如果 ``ending_index = len(sequence)-1``,``ending_index`` 也可以省略
 	```python
 	sequence[2:]
 	```
-	如果 ending_index < 0，终点就是 len(sequence) + ending_index
+	如果 ``ending_index < 0``，终点就是 ``len(sequence) + ending_index``
 	```python
 	ns = [1,2,3]
 	print ns[:-1] # 输出 1,2
@@ -268,11 +266,8 @@ sequence[index]
 	```
 	开始和结束索引可以超过序列的长度，开始索引小于0按0算，结束索引超过最大索引按最大索引算
 
-##### 字符串类型不可变  
-	
-	修改字符串中的某个字符，不能通过索引的方式来修改，只能通过创建一个新串。
-	
-	删除字符串中的某个字符也是一样。
+##### 字符串类型不可变
+修改字符串中的某个字符，不能通过索引的方式来修改，只能通过创建一个新串。删除字符串中的某个字符也是一样。
 
 ##### 编译时字符串连接
 
@@ -310,7 +305,7 @@ print s.substitute(lang = 'Python',howmany=3)
 ```python
 print r'\n' # 输出：\n
 ```
-	
+
 ##### zip()
 
 将两个字符串相应位置字符组合成一个
@@ -320,7 +315,7 @@ zip(s,t)
 # [('f', 'o'), ('o', 'b'), ('a', 'r')]
 ```
 
-##### ''' 应对特殊符号，比如 HTML 文本
+##### ``'''`` 应对特殊符号，比如 HTML 文本
 
 ##### 列表赋值
 
@@ -359,7 +354,7 @@ a.extend(b)
 ##### 列表解析
 
 ```python
-[ i*2 for i in [1,2,3] # 输出 [1,4,9]
+[ i*2 for i in [1,2,3]] # 输出 [1,4,9]
 ```
 还可以带有判断
 ```python
@@ -381,18 +376,16 @@ list.sort(func=None,key = None,reverse = False) # func是比较函数，key是fu
 
 ##### 使用列表构建栈和队列
 
-* 构建栈  
-	
-	```python
+* 构建栈
+```python
 	aList.pop() # 出栈
 	aList.append() # 入栈
-	```
-* 构建队列  
-	
-	```python
+```
+* 构建队列
+```python
 	aList.pop(0) # 出队
 	aList.append(0) # 入队
-	```
+```
 
 ##### 元组的不可变性
 
@@ -417,16 +410,16 @@ a = ('xyz',) # 如果没有 ","，a 会被赋值成一个 "xyz" 字符串
 
 ##### 拷贝 Python 对象，浅拷贝和深拷贝
 
-* 浅拷贝  
+* 浅拷贝
 	当创建了一个对象 a，并将 a 赋值给了 b，只是将 a 这个引用复制给了 b，修改 b 引用的对象时，也就是在修改 a 引用的对象。
-* 深拷贝  
+* 深拷贝
 	使用 copy 模块的 copy.deepcopy()
 	```python
 	import copy
 	b = copy.deepcopy(a) # 深拷贝
 	b = copy.copy(a) 	 # 浅拷贝
 	```
-    
+
 ### 第七章 字典
 
 ##### 创建字典
@@ -525,14 +518,12 @@ del s # 删除整个集合
 ```
 ##### 集合类型操作符
 
-* 联合 | 
-	```python
-	z = s|t
-	# z 包含了 t 和 s 所有的元素
-	```
+* 联合 | ，``z = s|t`` z 包含了 t 和 s 所有的元素
 * 交集 &
 * 差集 -
-* 对称分布，两个集合不属于对方的值的集合，也就是异或操作
+* 对称分布 ^，两个集合不属于对方的值的集合，也就是异或操作
+
+另外 ``<`` 和 ``>`` 可以用来判断集合之间的从属关系
 
 ##### 混合集合类型操作
 
@@ -549,16 +540,16 @@ del s # 删除整个集合
 
 ##### 内建函数
 
-* set()和 frozenset()  
-	set() 生成可变集合，frozenset() 生成不可变集合。  
+* set()和 frozenset()
+	set() 生成可变集合，frozenset() 生成不可变集合
 	参数必须是可以迭代的，比如字符串，字典，列表，元组
 
 
 ### 第八章 条件和循环
 
-##### 条件语句缩进解决了"悬挂else" 问题
+##### 条件语句缩进解决了"悬挂 else" 问题
 
-```c
+```python
 /* dangling-else in C */
 if (balance > 0.00)
 	if (((balance - amt) > min_bal) && (atm_cashout() == 1))
@@ -586,7 +577,7 @@ X if C else Y，其中 X 和 Y 是两个待选的值，如果表达式 C 为 Tru
 
 ##### for 语句
 
-for语句可以遍历序列成员，可以用在列表解析 和 生成器表达式中，它会自动调用迭代器的next() 方法。其实其更像 shell 语句中的 foreach	
+for语句可以遍历序列成员，可以用在列表解析 和 生成器表达式中，它会自动调用迭代器的next() 方法。其实其更像 shell 语句中的 foreach
 
 ##### for 用于迭代器类型
 
@@ -608,13 +599,13 @@ sorted(),reversed().enumerate(),zip()，其中 sorted() 和 zip() 返回一个�
 
 ##### 迭代器和 iter() 函数
 
-* 迭代器如何迭代？  
+* 迭代器如何迭代？
 	迭代器又一个 next() 方法的对象，而不是通过索引来计数。每次调用 next() 方法返回下一个元素。全部的条目迭代结束之后，会引发一个 StopIteration，表示迭代完成。
 
 * 迭代器的限制
 	* 不能向前移动
 	* 不能复制一个迭代器，如果想要再次迭代同个对象，需要重新建一个迭代器对象
-	
+
 * 使用迭代器
 
 ```python
@@ -1005,7 +996,7 @@ pdb 调试器类似于 gdb 调试器
 ##### 关键字参数
 
 ```python
-foo(x = 42,y = 54)
+foo(x = 42, y = 54)
 ```
 这样的规范，允许参数缺失或者不按顺序，解释器通过给出的关键字来匹配参数的值
 
@@ -1074,12 +1065,16 @@ reduce(add,[1,2,3,4,5])   # 计算列表和
 
 来过滤数据集合中的元素
 
-> 主要就是回调函数嘛
+> 主要就是回调函数
 
 ##### 闭包
 
 [廖雪峰 教程](https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/001431835236741e42daf5af6514f1a8917b8aaadff31bf000)
 
+
+### 第十二章 模块
+
+### 第十三章 面向对象
 
 
 
