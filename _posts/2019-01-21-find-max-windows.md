@@ -7,7 +7,7 @@ author:     "shihunyewu"
 header-img: "img/post-bg-unix-linux.jpg"
 catalog: false
 tags:
-    - LeetCode
+    - LEETCODE
 ---
 > 自入题海以来，饱受X*最长的子串问题的困扰
 

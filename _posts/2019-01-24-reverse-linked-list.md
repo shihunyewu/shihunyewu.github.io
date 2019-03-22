@@ -1,3 +1,15 @@
+---
+layout:     post
+title:      "reverse-part-linked-list"
+subtitle:   " \"翻转部分链表\""
+date:       2019-01-19 11:11:11
+author:     "shihunyewu"
+header-img: "img/post-bg-unix-linux.jpg"
+catalog: false
+tags:
+    - LEETCODE
+---
+> 链表就地转置之定点部分转置
 ### 92. Reverse Linked List II
 边界值值得思考
 
