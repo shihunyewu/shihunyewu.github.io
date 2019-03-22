@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      "Simple-Sorted"
-subtitle:   " \"简单排序问题\""
+title:      "Mysql-Isolation"
+subtitle:   " \"Mysql 中的隔离级别\""
 date:       2019-03-01 11:11:11
 author:     "shihunyewu"
 header-img: "img/post-bg-unix-linux.jpg"
