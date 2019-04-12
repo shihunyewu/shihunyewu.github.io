@@ -49,3 +49,20 @@ Java I/O 使用了装饰器模式来实现，以 InputStream 为例。
 - BufferedInputStream 具体的装饰器，具体的装饰者用于装饰组件，为组件提供额外的功能。
 
 ![参照](https://raw.githubusercontent.com/CyC2018/CS-Notes/master/docs/notes/pics/DP-Decorator-java.io.png)
+
+## 适配器模式
+使用既有类来实现另一个接口，实现方式可以是继承接口和既有类，或者是继承接口，使用既有类作为成员，在接口方法中借用既有类的方法。
+### 具体应用场景
+- HashSet 底层使用 HashMap 实现
+```java
+    /**
+     * Constructs a new, empty set; the backing <tt>HashMap</tt> instance has
+     * default initial capacity (16) and load factor (0.75).
+     */
+    public HashSet() {
+        map = new HashMap<>();
+    }
+```
+- TreeSet 底层使用 TreeSet 实现
+- Stack 底层使用 Vector 实现
+
