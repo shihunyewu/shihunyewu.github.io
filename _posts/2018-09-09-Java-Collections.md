@@ -124,21 +124,8 @@ private void writeObject(java.io.ObjectOutputStream s)
 2. poll()，返回第一个元素并删除，如果没有，返回 null
 3. peek()，返回第一个元素，如果没有，返回 null
 
-
-#### 如何实现有序
-
-### HashSet
-#### 常用函数
-1. add(T t)
-2. contains(T t)
-
-
-#### 如何计算 hashCode
-
-### TreeSet
-#### 常用函数
-1. add(T t)
-2. contains(T t)
+#### 如何实现优先
+堆
 
 ### HashMap
 #### 常用成员函数
@@ -146,8 +133,68 @@ private void writeObject(java.io.ObjectOutputStream s)
 2. get(key)
 3. containsKey(key)
 
+#### 如何计算 hashCode
+```java
+    static final int hash(Object key) {
+        int h;
+        return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+    }
+```
+上述代码表明 HashMap 的 key 是可以是 null 的，只要是 null 即返回 0。非零的情况下 `key.hashCode() ^ (h>>>16)`
 
-#### 如何扩容
+#### 添加元素
+```java
+    final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
+                   boolean evict) {
+        Node<K,V>[] tab;
+        Node<K,V> p;
+        int n, i;
+        if ((tab = table) == null || (n = tab.length) == 0) // 如果是初始状态，将创建 table
+            n = (tab = resize()).length;
+        if ((p = tab[i = (n - 1) & hash]) == null)  // 如果对应的键值为 null，那么直接将 tab[i] 置为 node
+            tab[i] = newNode(hash, key, value, null);
+        else {
+            Node<K,V> e;
+            K k;
+            if (p.hash == hash &&
+                ((k = p.key) == key || (key != null && key.equals(k))))
+                e = p;
+            else if (p instanceof TreeNode) // 如果是树的节点，将插入 (key,value)
+                e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
+            else {
+                for (int binCount = 0; ; ++binCount) {
+                    if ((e = p.next) == null) { // 遍历到最后一个元素
+                        p.next = newNode(hash, key, value, null); // 使用尾插法
+                        if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
+                            treeifyBin(tab, hash); // 如果链表超过了长度，那么将链表重构成红黑树
+                        break;
+                    }
+                    if (e.hash == hash &&
+                        ((k = e.key) == key || (key != null && key.equals(k)))) // 如果链表中是否有相同的 (key,value) 直接返回
+                        break;
+                    p = e;
+                }
+            }
+            if (e != null) { // existing mapping for key
+                V oldValue = e.value;
+                if (!onlyIfAbsent || oldValue == null)
+                    e.value = value;
+                afterNodeAccess(e);
+                return oldValue;
+            }
+        }
+        ++modCount;
+        if (++size > threshold)
+            resize();
+        afterNodeInsertion(evict);
+        return null;
+    }
+```
+从上面的代码可以得知：
+- hashMap 不允许存在相同的 (key, value) 组合存在
+- 每个 hash 值对应的链表长度如果超过 TREEFY_THRESHOLD 将会把链表重构为红黑树
+- 当还是链表时，插入新元素使用尾插法
+- 最后两个参数的含义还未搞懂
 
 ### TreeMap
 #### 常用成员函数
@@ -157,6 +204,16 @@ private void writeObject(java.io.ObjectOutputStream s)
 
 #### key 如何有序
 
+
+### HashSet
+#### 常用函数
+1. add(T t)
+2. contains(T t)
+
+### TreeSet
+#### 常用函数
+1. add(T t)
+2. contains(T t)
 
 ### ConcurrentHashMap
 #### 常用成员函数
