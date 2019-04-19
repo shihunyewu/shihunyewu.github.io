@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Totete-array-find-min"
+title:      "Rotate-array-find-min"
 subtitle:   " \"旋转数组中查找最小的元素\""
 date:       2019-04-17 11:11:11
 author:     "shihunyewu"
