@@ -10,6 +10,8 @@ tags:
     - Java
 ---
 
+> 每次读都应该有新的体会
+
 ## 14 章 线程
 ##### 14.2 中断线程
 
@@ -25,6 +27,101 @@ tags:
     }
 ```
 
+###### 处理中断
+假设 A 线程为主线程，B 线程为子线程。A 线程调用 B 线程的 interrupt 方法，分为以下两种情况：
+1. B 线程内没有 sleep() 或者 wait()
+线程内时刻调用 IsInterrupt 方法返回中断信号，判断是否中断，如果中断，做出相应的反应。
+```java
+package interruptLearn;
+public class InterruptTest {
+	public static void main(String[] args) {
+		TestThread testThread = new TestThread();
+		testThread.start();
+
+		// 延时3秒后  interrupt 中断
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		testThread.interrupt();
+	}
+
+	private static class TestThread extends Thread {
+
+		@Override
+		public void run() {
+			int num = 0;
+			while (true) {
+				if (isInterrupted()) { // 外部中断当前线程后，本线程检测到中断
+					System.out.println("当前线程 isInterrupted");
+					// 对外部的中断做出响应，跳出本循环
+					break;
+				}
+				num++;
+				if (num % 100 == 0) {
+					System.out.println("num : " + num);
+				}
+			}
+		}
+	}
+}
+```
+2. B 线程存在 sleep() 或者 wait()
+处在 sleep() 和 wait() 状态时，外部线程对本线程进行中断时，会抛出 InterruptedException 异常。因此除了 1 中的情况还要在捕获到中断异常之后做对应的处理。另外捕获异常之后，线程 B 的中断状态标志位会被置为 false，因此这就给了我们两个选择，一个是处理好异常之后，接着运行，一个是处理好异常之后，直接跳出任务，或者是自己中断自己，触发本线程别的地方的中断处理程序。
+```java
+package interruptLearn;
+public class InterruptTest {
+	public static void main(String[] args) {
+		TestThread testThread = new TestThread();
+		testThread.start();
+
+		// 延时3秒后  interrupt 中断
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		testThread.interrupt();
+	}
+
+	private static class TestThread extends Thread {
+
+		@Override
+		public void run() {
+			int num = 0;
+			while (true) {
+				if (isInterrupted()) { // 外部中断当前线程后，本线程检测到中断
+					System.out.println("当前线程 isInterrupted");
+					// 对外部的中断做出响应，跳出本循环
+					break;
+				}
+				num++;
+				try {
+					sleep(10);
+				} catch (InterruptedException e) {
+					// 捕获中断异常
+					// 推荐三种方式
+					// 一种是不中断当前线程
+					// System.out.println("我睡眠的时候有人来中断了");
+					// 一种是直接退出本线程
+					// break;
+					// 一种是自己中断自己，然后触发别的地方的中断处理程序
+					// interrupt();
+				}
+				if (num % 100 == 0) {
+					System.out.println("num : " + num);
+				}
+			}
+		}
+	}
+}
+```
+###### 四个用到的方法
+1. interrupt，向线程发送一个中断。线程的中断标志位将被置为 true，如果线程在 wait 或者是 sleep，将抛出中断异常，并将中断标志位置为 false。
+2. static interrupted，测试当前线程是否中断，返回中断标志位的值，并将中断标志位置为 false。
+3. boolean isInterrupted，测试当前线程是否被中断，返回中断标志位。
+4. Thread.currentThread, 返回当前线程对象 Thread
 
 ##### 14.3 线程状态
 
