@@ -13,7 +13,7 @@ tags:
 > 每次读都应该有新的体会
 
 ## 14 章 线程
-##### 14.2 中断线程
+### 14.2 中断线程
 
 * 默认终止条件：
 	* run 方法执行到最后一条语句
@@ -117,70 +117,258 @@ public class InterruptTest {
 	}
 }
 ```
-###### 四个用到的方法
+
+#### 四个用到的方法
 1. interrupt，向线程发送一个中断。线程的中断标志位将被置为 true，如果线程在 wait 或者是 sleep，将抛出中断异常，并将中断标志位置为 false。
 2. static interrupted，测试当前线程是否中断，返回中断标志位的值，并将中断标志位置为 false。
 3. boolean isInterrupted，测试当前线程是否被中断，返回中断标志位。
 4. Thread.currentThread, 返回当前线程对象 Thread
 
-##### 14.3 线程状态
-
+### 14.3 线程状态
+#### 线程的状态
 * New 新创建
 * Runnable 可运行
 * Blocked 被阻塞
 * Waiting 等待
 * Timed waiting 计时等待
 * Terminated 被终止
-	可以使用 getState 方法来获得当前线程的状态
 
-* 被阻塞线程和等待线程
-	* 相同点：线程处于二者状态时，均不活动，不运行任何代码，并且消耗最少的资源。
-	* 不同点：如何到达非活动状态
-		* 被阻塞线程，主动请求获得一个内部的对象锁时，而该锁为其他线程持有，该线程进入阻塞状态
-		* 等待线程，线程等待另一个线程通知调度器一个条件时，自己进入等待状态。
-			* 计时等待，这个状态将一直保持到超时期或者接收到适当的通知。
-```mermaid
-	graph LR;
-    a(新创建)--开始-->b(可运行);
-    b --请求锁--> c(被阻塞);
-    c --得到锁--> b;
-    b --等待通知--> d(等待);
-    d --出现通知--> b;
-    b --等待超时或者通知-->e(计时等待);
-    e --出现超时或通知 -->b;
-    b --运行方法 exits--> f(被终止);
+可以使用 getState 方法来获得当前线程的状态
+```java
+package interruptLearn;
+
+public class InterruptTest {
+	public static void main(String[] args) {
+		TestThread testThread = new TestThread();
+		testThread.start();
+
+		for(int i = 0; i < 10; i++) {
+			try {
+				Thread.sleep(40);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			System.out.println("testThread 的状态为:" + testThread.getState());
+		}
+		testThread.interrupt();
+		try {
+			testThread.join(); // 将主线程阻塞在此，等待子线程
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println("testThread 的状态为:" + testThread.getState());
+	}
+
+	private static class TestThread extends Thread {
+		@Override
+		public void run() {
+			int num = 0;
+			while (true) {
+				if (isInterrupted()) { // 外部中断当前线程后，本线程检测到中断
+					System.out.println("当前线程 isInterrupted");
+					// 这里虽然被中断了，但是得到的还是 RUNABLE
+					System.out.println("testThread 的状态为:" + this.getState());
+					// 对外部的中断做出响应，跳出本循环
+					break;
+				}
+				num++;
+				try {
+					sleep(100);
+				} catch (InterruptedException e) {
+					 Thread.currentThread().interrupt();
+				}
+				if (num % 10 == 0) {
+					System.out.println("num : " + num);
+				}
+			}
+		}
+	}
+}
+```
+以上代码的输出为
+```java
+testThread 的状态为:TIMED_WAITING
+testThread 的状态为:TIMED_WAITING
+testThread 的状态为:TIMED_WAITING
+testThread 的状态为:TIMED_WAITING
+testThread 的状态为:TIMED_WAITING
+testThread 的状态为:TIMED_WAITING
+testThread 的状态为:TIMED_WAITING
+testThread 的状态为:TIMED_WAITING
+testThread 的状态为:TIMED_WAITING
+testThread 的状态为:TIMED_WAITING
+当前线程 isInterrupted
+testThread 的状态为:RUNNABLE
+testThread 的状态为:TERMINATED
 ```
 
+#### 线程新建
+线程新建即用 `new` 关键字创建线程之后，但是还没有开始运行线程中的代码。还需要准备一些必要的信息，比如方法栈，程序计数器等。
 
-##### 14.4 线程属性
+#### 线程可运行
+一旦调用了 start 方法，线程开始进入 Runnable 状态，实际上 Runnable 代表两种状态，一种是可运行一种是正在运行。这取决于操作系统的给定的时间。尤其是在抢占式操作系统中。
 
-* 线程优先级
-	* 使用 setPriority 方法提高或者降低线程的优先级。从 MIN_PRIORITY 到 MAX_PRIORITY 共 1 到 10 级。常规 NORM_PRIORITY 5.
-	* 策略：线程调度器每次只选具有较高优先级的线程，即使低优先级的线程从来没有运行过，会造成饥饿现象，应该尽力避免（如何避免呢？？）
-	```java
-    static void yield() // 当前线程让步，如果其他可运行的线程具有与此线程相同优先级的，会被调度。
-    ```
-* 守护线程
-	* 作用：主要为其他线程提供服务。例如计时线程。
-	* 注意：当只剩下守护线程时，虚拟机就退出了，所以不要在守护线程中访问固有资源，比如文件，数据库等，因为其会在任何时候发生中断。
-	```java
-    标识该线程为守护线程或者用户线程，在线程启动之前调用。
-	```
+#### 线程阻塞
+线程阻塞是因为遇到 IO 阻塞或者是遇到锁而导致时间片被分割
+#### 线程等待
+线程等待是主动将时间片让出去，等待时间片。
+#### 线程终止
+- run 运行完，退出线程
+- 抛出异常，意外中断本线程
 
-* 未捕获异常处理器
-	线程的 run 方法不能抛出任何被检测的异常，不被检测的异常会导致线程终止。实际上，在线程死亡之前，已经将异常传递到了用于未捕获异常的处理器。
-    * 具体处理，处理器实现一个 Thread.UncaughtExceptionHandler 接口的类。实现其唯一方法
-	```java
-        void uncaughtException(Thread t,Throwable e)// 使用 setUncaughtExceptionHandler方法为任何线程安装处理器
-	```
-    * 默认处理器，可以使用
-	```java
-        setDefaultUncaughtExceptionHandler 为所有线程安装一个默认的处理器，替换处理器可使用日志 api 发送未捕捉异常的报告到日志中。
-	```
-    * 不安装默认处理器
-    	默认的处理器为空，不为独立的线程安装处理器，此时的处理器就是该线程的 ThreadGroup 对象。
+### 14.4 线程属性
 
-##### 14.5 同步
+####  线程优先级
+* 使用 setPriority 方法提高或者降低线程的优先级。从 MIN_PRIORITY 到 MAX_PRIORITY 共 1 到 10 级。常规 NORM_PRIORITY 5.
+* 策略：线程调度器每次只选具有较高优先级的线程，即使低优先级的线程从来没有运行过，会造成饥饿现象，应该尽力避免（如何避免呢？？）
+```java
+static void yield() // 当前线程让步，如果其他可运行的线程具有与此线程相同优先级的，会被调度。
+```
+
+#### 守护线程
+* 作用：主要为其他线程提供服务。例如计时线程。
+* 注意：当只剩下守护线程时，虚拟机就退出了，所以不要在守护线程中访问固有资源，比如文件，数据库等，因为其会在任何时候发生中断。
+```java
+标识该线程为守护线程或者用户线程，在线程启动之前调用。
+```
+
+#### 未捕获异常处理器
+线程的 run 方法不能抛出任何被检测的异常（因为无论是从 Thread 或者是 Runnable 中继承而来的 run 方法都没有抛出异常，父方法没有抛出异常，子方法就不能），不被检测的异常会导致线程终止。实际上，在线程死亡之前，已经将异常传递到了用于未捕获异常的处理器。在父线程中是无法直接捕获异常的，如果想捕获异常需要自定义异常捕获器，然后处理异常。为了证明在父线程中无法捕获异常，我做了一个小实验。如下
+```java
+public class CaughtExceptionTest {
+
+	public static void main(String[] args) {
+		try {
+			Thread t = new Thread(new InnerThread());
+			t.start();
+		}catch(RuntimeException e) {
+			System.out.println("捕捉到异常了");
+		}
+	}
+}
+
+class InnerThread implements Runnable{
+	@Override
+	public void run() {
+		System.out.println("inner 线程开始运行");
+		throw new RuntimeException();
+	}
+}
+```
+输出结果为
+```java
+Exception in thread "Thread-0" inner 线程开始运行
+java.lang.RuntimeException
+	at priorityLearn.InnerThread.run(PriorityTest.java:43)
+	at java.lang.Thread.run(Thread.java:748)
+```
+可以看出并没有执行父线程中的 catch 语句中的内容。
+
+#####  自定义异常捕获器
+[处理器实现一个 Thread.UncaughtExceptionHandler 接口的类。实现其唯一方法](https://www.cnblogs.com/brolanda/p/4725138.html)，该示例中使用了 Excutor 框架，不够直观，下面是我简化之后的例子。
+```java
+public class CaughtExceptionTest {
+
+	public static void main(String[] args) {
+        Thread t = new Thread(new InnerThread());
+        t.setUncaughtExceptionHandler(new MyUncaughtExceptionHandler());  // 安装自定义的异常捕获器
+        t.start();
+	}
+}
+
+/**
+ * 自定义一个异常捕获器，实现了 Thread.UncaughtExceptionHandler 接口
+ * @author bupt632
+ *
+ */
+class MyUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler{
+    @Override
+    public void uncaughtException(Thread t, Throwable e) {
+        System.out.println("caught    "+e);
+    }
+}
+
+class InnerThread implements Runnable{
+	@Override
+	public void run() {
+		System.out.println("inner 线程开始运行");
+		throw new RuntimeException();
+	}
+}
+```
+运行结果为:
+```java
+inner 线程开始运行
+caught    java.lang.RuntimeException
+```
+
+除了自定义异常处理器之外还可以选择
+* 默认处理器，可以使用
+```java
+    setDefaultUncaughtExceptionHandler 为所有线程安装一个默认的处理器，替换处理器可使用日志 api 发送未捕捉异常的报告到日志中。
+```
+* 不安装默认处理器
+    默认的处理器为空，不为独立的线程安装处理器，此时的处理器就是该线程的 ThreadGroup 对象。但是不推荐使用
+
+### 14.5 同步
+两个线程并发地修改同一个对象的状态，这就引起了竞争条件，引起了竞争就会使得对象的状态出现问题，最常见的一个例子就是多个线程并发对一个变量加 1。如下
+```java
+package concurrencyLearn;
+
+public class ConcurrencyErrorSituation {
+
+	public static void main(String[] args) throws InterruptedException {
+		ModifiedObject mo = new ModifiedObject();
+
+		TestThread t1 = new TestThread(mo);
+		TestThread t2 = new TestThread(mo);
+		TestThread t3 = new TestThread(mo);
+		t1.start();
+		t2.start();
+		t3.start();
+
+		t1.join();
+		t2.join();
+		t3.join();
+
+		System.out.println("i 最终的值为：" + mo.get());
+	}
+}
+
+class ModifiedObject{
+	private int i = 0;
+	void increaseOne() {
+		i++;
+	}
+	int get() {
+		return i;
+	}
+}
+
+class TestThread extends Thread{
+	ModifiedObject mo;
+	public TestThread(ModifiedObject mo) {
+		this.mo = mo;
+	}
+	@Override
+	public void run() {
+		for(int i = 0; i < 10000; i++) {
+			mo.increaseOne();
+		}
+	}
+}
+```
+运行结果为:
+```java
+i 最终的值为：14934
+```
+三个线程各使 i 自增 10000 次，我们期望的值应该是 30000，但是实际上输出的值却是 14934，小于 30000。引起该现象的原因需要从 `ModefiedObject` 中的 `increaseOne` 函数中的 `i++` 开始说起，实际上 `i++` 并不是一个原子操作，而是三个操作
+1. 从主内存中取出 i 的值到工作内存（每个线程有各自对应的工作内存）
+2. 计算出 i + 1 的值，现在是在线程对应的工作内存中
+3. 将 i + 1 写回主内存中
+
+在同一时刻中，很可能 a 线程处于 3 阶段，而 b 线程处于 2 阶段，二者此时的 i 值是相同的，当 a 线程执行完 3 时，将 i + 1 写入到主内存中后， i 值变成了 i + 1，而 b 在 2 阶段中的 i 还是原来的 i，并非主内存中的 i，因此当 b 执行完 i + 1 操作之后，再执行 3 阶段相当于还是将 i + 1 写入内存而非我们所期望的 i + 1 + 1，虽然外观上是 a b 线程对 i 分别加了两次，实际上是 b 线程的操作覆盖了 a 线程的操作。理想情况下，我们希望将 i++ 这个操作变成原子性的操作。
+
 
 * 资源，竞争，出错
 	为了将一系列操作封装成原子操作，使其不可被打断，java 提供了两种方式，其一为 synchronized关键字，synchronized关键字自动提供一个锁和相关条件，其二为 ReentrantLock 保护代码块。
