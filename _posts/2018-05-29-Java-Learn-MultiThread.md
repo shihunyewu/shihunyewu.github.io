@@ -10,7 +10,7 @@ tags:
     - Java
 ---
 
-> 每次读都应该有新的体会
+> 每次读都应该有新的体会。
 
 ## 14 章 线程
 ### 14.2 中断线程
@@ -369,9 +369,9 @@ i 最终的值为：14934
 
 在同一时刻中，很可能 a 线程处于 3 阶段，而 b 线程处于 2 阶段，二者此时的 i 值是相同的，当 a 线程执行完 3 时，将 i + 1 写入到主内存中后， i 值变成了 i + 1，而 b 在 2 阶段中的 i 还是原来的 i，并非主内存中的 i，因此当 b 执行完 i + 1 操作之后，再执行 3 阶段相当于还是将 i + 1 写入内存而非我们所期望的 i + 1 + 1，虽然外观上是 a b 线程对 i 分别加了两次，实际上是 b 线程的操作覆盖了 a 线程的操作。理想情况下，我们希望将 i++ 这个操作变成原子性的操作。
 
+为了将一系列操作封装成原子操作，使其不可被打断，java 提供了两种方式，其一为 synchronized关键字，synchronized关键字自动提供一个锁和相关条件，其二为 ReentrantLock 保护代码块。
 
-* 资源，竞争，出错
-	为了将一系列操作封装成原子操作，使其不可被打断，java 提供了两种方式，其一为 synchronized关键字，synchronized关键字自动提供一个锁和相关条件，其二为 ReentrantLock 保护代码块。
+####  ReentrantLock
 
 * 锁对象
     ```java
@@ -386,7 +386,6 @@ i 最终的值为：14934
      // 每个调用 try 中语句的代码将串行执行
     }
     ```
-    如果使用锁，就不能使用带资源的 try 语句？
 
 * 条件对象
 	* 出现的原因：
@@ -395,7 +394,7 @@ i 最终的值为：14934
     ```java
         private Condition sufficientFunds;
         sufficientFunds = bankLock.newCondition();
-        // 当发现条件不满足时，调用
+        // 当发现条件不满足时，调用，线程会自动让出已经获得的锁
         sufficientFunds.await();
         // 当其他线程操作之后，上面条件可能被满足的时候，调用下面方法，让所有那些阻塞的线程重新测试条件
         sufficientFunds.signalAll();
@@ -409,14 +408,108 @@ i 最终的值为：14934
 	* 锁可以拥有一个或多个相关的条件对象
 	* 每个条件对象管理那些已经进入被保护的代码段但还不能运行的线程
 
-* synchronized 关键字
-	* 实现基础：
-		java 语言内部的机制，从 1.0 开始，java 中的每个对象都有一个内部锁，如果对一个方法用 synchronized 关键字声明，那么该锁将保护整个方法中的代码
-    * 特点：
-    	内部锁只有一个相关条件，使用 wait 方法将一个线程添加到等待集中，使用 notifyAll 或者 notify 解除线程阻塞状态。
+举例，使用 lock 和 condition 实现生产者和消费者（生产者调用 bank 的 save 方法，消费者调用 consume），当银行中的钱数少于要消费的钱数时，condition 对象会 await，让出已经获得的 lock 锁，让生产者获得 lock，当生产者存好钱之后，再通知消费者，并且释放锁。
+```java
+package concurrencyLearn;
+
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class ConditionLearn {
+
+	public static void main(String[] args) {
+		Bank bank = new Bank();
+		Consumer consumer = new Consumer(bank);
+		Saver saver = new Saver(bank);
+		consumer.start();
+		saver.start();
+	}
+}
+
+class Consumer extends Thread{
+	Bank bank;
+
+	public Consumer(Bank bank) {
+		this.bank = bank;
+	}
+
+	@Override
+	public void run() {
+		while(true) {
+			try {
+				bank.consume(400);
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+}
+
+class Saver extends Thread{
+	Bank bank;
+
+	public Saver(Bank bank) {
+		this.bank = bank;
+	}
+
+	@Override
+	public void run() {
+		while(true) {
+			try {
+				bank.save(1000);
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+}
+
+class Bank{
+	Condition sufficientFunds;
+
+	ReentrantLock bankLock;
+
+	int menoy = 0;
+	public Bank() {
+		bankLock = new ReentrantLock();
+		this.sufficientFunds = bankLock.newCondition();
+	}
+
+	public void consume(int expend) throws InterruptedException {
+		bankLock.lock();
+		while(menoy < expend) { // 每次被唤醒都比较一下钱是否充足，不充足，那么等待
+			System.out.println("银行存额不足 " + menoy);
+			this.sufficientFunds.await(); // 会自动释放锁
+            // 当被通知 signalAll 之后会从 await 方法往下接着执行
+		}
+
+		this.menoy -= expend;
+		bankLock.unlock();
+	}
+
+	public void save(int menoy) throws InterruptedException {
+		bankLock.lock();
+		System.out.println("存钱 " + menoy);
+
+		this.menoy += menoy;
+		this.sufficientFunds.signalAll(); // 唤醒其他等待的锁
+		bankLock.unlock();
+	}
+}
+```
+
+####  synchronized 关键字
+
+* 实现基础：
+    java 语言内部的机制，从 1.0 开始，java 中的每个对象都有一个内部锁，如果对一个方法用 synchronized 关键字声明，那么该锁将保护整个方法中的代码
+* 特点：
+    内部锁只有一个相关条件，使用 wait 方法将一个线程添加到等待集中，使用 notifyAll 或者 notify 解除线程阻塞状态。
 
 * 内部锁和条件的局限
-	* 不能中断一个正在尝试获得所的线程
+	* 不能中断一个正在尝试获得锁的线程
 	* 试图获得锁时不能设置超时限制的时间
 	* 每个锁仅有单一的条件可能是不够的
 * 建议：
@@ -439,71 +532,154 @@ i 最终的值为：14934
     * 分析：
     	此处 lock 仅仅是用来使用每个 java 对象中持有的内部锁。使用对象的锁（该锁可以是内部锁）来实现原子操作，被称为客户端锁定。使用的前提是该对象中的所有原子操作也均是由内部锁来实现的，否则会出现问题，这是客户端锁定的脆弱之处。所以需要其他的机制来替代。
 
-* 监视器
-	锁和条件是面向函数，而监视器面向对象，监视器的最大的特点是该锁对对象所有的方法进行加锁。
 
-* Volatile 域
-	* 原因：
-		1. 多处理器的计算机能够暂时在寄存器或者本地内存缓冲器中保存内存中的值，多处理器的计算机处理多线程程序时，运行在不停的处理器上的线程可能在同一时刻从相同的内存地址中取到不同的值，因为该内存地址的值可以从不同的地方（例如寄存器或者是本地的内存缓冲器，而不是真正的内存中）取得。
-		2. 编译器可以改变指令执行顺序来使得吞吐量最大化。而指令重排的前提是单线程，只有当前线程可以修改内存中的值，但是现在的程序是面向多线程，会可能有多个线程来修改这个值。
-	1. [保证了不同线程对这个变量进行操作时的可见性，即一个线程修改了某个变量的值，这新值对其他线程来说是立即可见的。](https://www.cnblogs.com/dolphin0520/p/3920373.html)，保证了在 t 时刻，所有线程读取该变量的值均相同。
-	2. 禁止进行指令重排序。
-	3. 不提供原子性
-	```java
-    private volatile boolean done;
-    ```
-    > 如果对共享变量除了赋值之外不做其他操作，可以将这些变量声明为 volatile
 
-* final 变量
-	从多线程中安全地访问一个共享域，即这个域声明为 final 时。（将一个向量数组声明为final后，还是可以修改其中的内容，但是不可以重新让该变量名指向另一个向量数组）
+####  Volatile 域
+* 原因：
+    1. 多处理器的计算机能够暂时在寄存器或者本地内存缓冲器中保存内存中的值，多处理器的计算机处理多线程程序时，运行在不停的处理器上的线程可能在同一时刻从相同的内存地址中取到不同的值，因为该内存地址的值可以从不同的地方（例如寄存器或者是本地的内存缓冲器，而不是真正的内存中）取得。
+    2. 编译器可以改变指令执行顺序来使得吞吐量最大化。而指令重排的前提是单线程，只有当前线程可以修改内存中的值，但是现在的程序是面向多线程，会可能有多个线程来修改这个值。
+1. [保证了不同线程对这个变量进行操作时的可见性，即一个线程修改了某个变量的值，这新值对其他线程来说是立即可见的。](https://www.cnblogs.com/dolphin0520/p/3920373.html)，保证了在 t 时刻，所有线程读取该变量的值均相同。
+2. 禁止进行指令重排序。
+3. 不提供原子性
+```java
+private volatile boolean done;
+```
+> 如果对共享变量除了赋值之外不做其他操作，可以将这些变量声明为 volatile
+
+#### final 变量
+从多线程中安全地访问一个共享域，即这个域声明为 final 时。（将一个向量数组声明为final后，还是可以修改其中的内容，但是不可以重新让该变量名指向另一个向量数组）
 
 * 原子性
 	很多类提供给了原子方法，比如 java.util.concurrent.atomic.AtomicInteger类，提供了整数自增自减等操作，相似的还有 AtomicBoolean等
 
-* 死锁
+#### 原子性变量
+AtomicInteger, AtomicLong, AtomicReference 等。举例将 14.5 最开始的那个例子，将变量换成 AtomicInteger，并调用其 incrementAndGet 方法，自增 1，最终结果会变成正确的，因为此操作是原子性的。
 
-* 线程局部变量
+#### 死锁
+最基本的死锁情况就是 t_1 线程负责将 a 账户的钱转 delta 给 b 账户，t_2 线程负责将 b 账户的钱转 delta 给 a 账户。首先 t_1 获得 a 账户的锁， t_2 获得了 b 账户的锁，为了完成整个操作，t_1 和 t_2 会去请求对方所保有的锁，但是又不会释放自己所持有的锁，这种现象就是持有等待现象，二者互相等待对方保有的资源，但是自己又不释放资源。下面是具体例子。
+```java
+package deadLockLearn;
 
-	* 原因：
-		因为并非所有的对象都是线程安全的，并发访问可能破坏对象中的数据结构
-	* 使用 ThreadLocal 辅助类为各个线程提供各自的实例
-	```java
-    // 可以使用以下代码
-    public static final ThreadLocal<SimpleDateFormat> dataFormat =
-    new ThreadLocal<SimpleDateFormat>()
-    {
-    	protected SimpleDateFormat initialValue(){
-        	return new SimpleDateFormat("yyyy-MM-dd");
-        }
-    };
-    ...
-    // 访问时使用
-    String dateStamp = dateFormat.get().format(new Date());
-    // 第一次调用时，会调用 initialValue 方法，此后 get方法 会返回属于当前线程的实例。
-    ```
+public class DeadLockHello {
 
-* 锁测试和超时
-	* tryLock 方法，试图申请一个锁，否则返回 false，然后线程可以去做其他的事情。
-	* 获得锁的过程中被中断
-		* Lock 方法不能被中断，当线程在尝试获得锁的时候被中断，中断线程在获得锁之前会一直处于阻塞状态。如果出现死锁，那么lock就无法终止。
-		* tryLock，带有超时参数的话，超时之后，其将在等待期间被中断，会抛出 InterruptedException 异常。
-		* lockInterruptibly 方法，相当于一个超时设为无限的 tryLock 方法。
-		* myCondition.await(100,TimeUnit.MILLISECONDS),等待一个条件的时候也可以设定超时时间。
+	public static void main(String[] args) throws InterruptedException {
+		Account a = new Account();
+		Account b = new Account();
 
-* 读写锁
-	* 适用场景：如果很多线程从给一个数据结构中读取数据而很少线程修改其中的数据
-	* 适用方式：
-	```java
-    	private ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
-        private Lock readLock = rwl.readLock();
-        private Lock writeLock = rwl.writeLock();
-    ```
+		Transaction aToB = new Transaction(a, b, 100);
+		Transaction bToa = new Transaction(b, a, 100);
+		aToB.start();
+		bToa.start();
 
-* 为何弃用 stop 方法和 suspend 方法
-	* stop 方法很不安全，调用 stop 方法时，该方法终止所有未结束的方法。当线程被终止，立即释放被它锁住的所有对象的锁，这会导致对象处于不一致的状态。
-	* suspend 挂起一个持有一个锁的线程时，那么该锁在恢复之前是不可用的，其他等待该锁的线程处于阻塞状态，程序死锁。
+		aToB.join();
+		bToa.join();
+	}
+}
 
-##### 14.6 阻塞队列
+class Account{
+	int total = 0;
+
+	synchronized void transfer(Account b, int delta) { // 保有本对象的锁
+		total -= delta;
+		try {
+			Thread.sleep(1000);  // 给另一个线程足够时间获取 b 的锁
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		b.add(delta); // 尝试去获取对方的锁
+	}
+
+	synchronized void add(int delta) {
+		this.total += delta;
+	}
+}
+
+
+class Transaction extends Thread{
+	Account a;
+	Account b;
+	int delta;
+
+	public Transaction(Account a, Account b, int delta) {
+		this.a = a;
+		this.b = b;
+		this.delta = delta;
+	}
+
+	@Override
+	public void run() {
+		System.out.println("执行交易");
+		a.transfer(b, delta);
+		System.out.println("交易完成");
+	}
+}
+```
+执行结果一直卡在执行之后的 transfer 函数处
+```java
+执行交易
+执行交易
+...
+```
+在编程过程中应该尽量避免死锁情况的发生。在实际编程中尽量保证安全的加锁顺序或者是将锁设置成限时等待。
+
+#### 线程局部变量
+* 原因：
+    因为并非所有的对象都是线程安全的，并发访问可能破坏对象中的数据结构
+* 使用 ThreadLocal 辅助类为各个线程提供各自的实例
+
+举个例子：
+```java
+package threadLocalLearn;
+public class ThreadLocalTest {
+    static ThreadLocal<String> stringLocal = new ThreadLocal<String>();
+    public static void main(String[] args) throws InterruptedException {
+        stringLocal.set("我是主线程");;
+        System.out.println(stringLocal.get());
+
+        Thread thread1 = new Thread(){
+            public void run() {
+                stringLocal.set("我是子线程"); // 修改
+                System.out.println(stringLocal.get()); // 已经修改
+            };
+        };
+        thread1.start();
+        thread1.join();
+        System.out.println(stringLocal.get()); // 还是原值
+    }
+}
+```
+输出结果为
+```java
+我是主线程
+我是子线程
+我是主线程
+```
+[ThreadLocal 的用法和使用原理](https://www.cnblogs.com/coshaho/p/5127135.html)
+
+#### 锁测试和超时
+* tryLock 方法，试图申请一个锁，否则返回 false，然后线程可以去做其他的事情。
+* 获得锁的过程中被中断
+    * Lock 方法不能被中断，当线程在尝试获得锁的时候被中断，中断线程在获得锁之前会一直处于阻塞状态。如果出现死锁，那么lock就无法终止。
+    * tryLock，带有超时参数的话，超时之后，其将在等待期间被中断，会抛出 InterruptedException 异常。
+    * lockInterruptibly 方法，相当于一个超时设为无限的 tryLock 方法。
+    * myCondition.await(100,TimeUnit.MILLISECONDS),等待一个条件的时候也可以设定超时时间。
+
+#### 读写锁
+* 适用场景：如果很多线程从给一个数据结构中读取数据而很少线程修改其中的数据
+* 适用方式：
+```java
+    private ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
+    private Lock readLock = rwl.readLock();
+    private Lock writeLock = rwl.writeLock();
+```
+
+#### 为何弃用 stop 方法和 suspend 方法
+* stop 方法很不安全，调用 stop 方法时，该方法终止所有未结束的方法。当线程被终止，立即释放被它锁住的所有对象的锁，这会导致对象处于不一致的状态。
+* suspend 挂起一个持有一个锁的线程时，那么该锁在恢复之前是不可用的，其他等待该锁的线程处于阻塞状态，程序死锁。
+
+### 14.6 阻塞队列
 
 * 出现的原因：
 	作为一个高层的开发者，应该尽可能地远离底层构建块，应该尽可能使用并发处理的专业人士实现的较高层次的结构，这样更安全，更方便。
