@@ -811,7 +811,7 @@ class Task implements Callable<Integer>{
 ### 14.10 同步器
 |类|作用|何时使用
 |-|-|-|
-|CyclicBarrier|允许|？|
+|CyclicBarrier|CyclicBarrier 就是约定很多个线程均到达一个点之后，触发另一个事件，然后各自继续执行各自的流程。|多个子线程约定好一个点汇总结果，同时又不影响子线程接下来的操作|
 |CountDownLatch|允许线程集等待，直到为 0 为止|主线程等多个子线程执行完成|
 |Exchanger|允许两个线程交换对象准备好时交换对象|当两个线程工作在同一数据结构的两个实例上时，一个向实例添加数据一个向实例清除数据|
 |Semaphore|线程等待直到被允许运行为止|限制访问资源的线程总数|
@@ -962,6 +962,9 @@ class Producter extends Thread{
 	}
 }
 ```
+
+#### CountdownLatch 和 CyclicBarrier 的区别
+[二者区别](https://www.cnblogs.com/xiaorenwu702/p/3977833.html)，总起来说就是 CountDownLatch 是主线程等子线程，CyclicBarrier 是子线程之间互相等待。
 
 
 
