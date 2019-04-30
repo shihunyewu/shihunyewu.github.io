@@ -656,7 +656,8 @@ public class ThreadLocalTest {
 我是子线程
 我是主线程
 ```
-[ThreadLocal 的用法和使用原理](https://www.cnblogs.com/coshaho/p/5127135.html)
+##### ThreadLocal 的实现原理
+[ThreadLocal 的用法和使用原理](https://www.cnblogs.com/coshaho/p/5127135.html)，实际上每个线程都维护了一个 Map，然后键为主程序中得到的 ThreadLocal 变量，值是本线程中为 ThreadLocal 建立的副本。
 
 #### 锁测试和超时
 * tryLock 方法，试图申请一个锁，否则返回 false，然后线程可以去做其他的事情。
@@ -678,11 +679,289 @@ public class ThreadLocalTest {
 #### 为何弃用 stop 方法和 suspend 方法
 * stop 方法很不安全，调用 stop 方法时，该方法终止所有未结束的方法。当线程被终止，立即释放被它锁住的所有对象的锁，这会导致对象处于不一致的状态。
 * suspend 挂起一个持有一个锁的线程时，那么该锁在恢复之前是不可用的，其他等待该锁的线程处于阻塞状态，程序死锁。
+* 建议，应该使用外部中断来停止线程，而线程内部应该时刻检查中断信号，检测到中断信号之后进行收尾操作，响应中断。
 
 ### 14.6 阻塞队列
+* 出现的原因：作为一个高层的开发者，应该尽可能地远离底层构建块，应该尽可能使用并发处理的专业人士实现的较高层次的结构，这样更安全，更方便。
+* 特点：生产者线程向队列插入元素，消费者线程从队列中取出，使用队列可以安全地从一个线程向另一个线程传递数据。该过程中不需要线程同步，因为队列已经保证了同步。
 
-* 出现的原因：
-	作为一个高层的开发者，应该尽可能地远离底层构建块，应该尽可能使用并发处理的专业人士实现的较高层次的结构，这样更安全，更方便。
-* 特点：
-	生产者线程向队列插入元素，消费者线程从队列中取出，使用队列可以安全地从一个线程向另一个线程传递数据。该过程中不需要线程同步，因为队列已经保证了同步。
+#### 使用阻塞队列实现生产者消费者
+juc 包中提供了很多阻塞队列，下面就用其中的有界阻塞队列 ArrayBlockingQueue 来实现生产者消费者，下面代码中当设置消费者每次的睡眠时间小于生产者时，消费者就会有时发生阻塞，反之生产者阻塞。
+```java
+package blockingQueueLearn;
+
+import java.util.concurrent.ArrayBlockingQueue;
+
+public class ConsumerProducerUsingBlockingQueue {
+	public static void main(String[] args) throws InterruptedException {
+		ArrayBlockingQueue<Integer> buffer = new ArrayBlockingQueue<>(2);
+		Consumer consumer = new Consumer(buffer);
+		Producter producter = new Producter(buffer);
+
+		consumer.start();
+		producter.start();
+
+		consumer.join();
+		producter.join();
+	}
+}
+
+
+class Producter extends Thread{
+	private ArrayBlockingQueue<Integer> buffer;
+
+	public Producter(ArrayBlockingQueue<Integer> buffer) {
+		this.buffer = buffer;
+	}
+
+	@Override
+	public void run() {
+		int resource = 10;
+		while(true)
+		try {
+			System.out.println("生产者准备放置资源");
+			buffer.put(resource); // 每过 100 ms， 向 buffer 中放置资源
+			System.out.println("生产者放置资源");
+//			Thread.sleep((int)(Math.random()*1000));
+			Thread.sleep(90);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}
+
+
+class Consumer extends Thread{
+	private ArrayBlockingQueue<Integer> buffer;
+	public Consumer(ArrayBlockingQueue<Integer> buffer) {
+		this.buffer = buffer;
+	}
+	@Override
+	public void run() {
+		while(true)
+		try {
+			System.out.println("消费者准备");
+			Integer result = buffer.take();
+			System.out.println("消费者从阻塞队列中拿出资源——" + result);
+//			Thread.sleep((int)(Math.random()*1000));
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}
+```
+
+#### api 解释
+
+####  阻塞队列实现原理
+阻塞队列的底层是使用 AQS 来实现的，具体的实现原理为 [AbstractQueuedSynchronizer源码解读](http://www.cnblogs.com/micrari/p/6937995.html)
+
+### 14.8 Callable 和 FutureTask
+传统的线程实现方式无非两种，一种是继承 Thread，另一种是实现 Runnable 接口，然后作为 Thread 实例对象的参数。二者的 run 均没有返回值， FutureTask 将实现了 Callable 的任务可以有任务完成之后的返回值返回。
+```java
+package futureTaskLearn;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+
+public class FutureTaskTest {
+
+	public static void main(String[] args) throws InterruptedException, ExecutionException {
+		Task task = new Task();
+		FutureTask<Integer> futureTask = new FutureTask<>(task);
+		Thread t = new Thread(futureTask);
+		t.start();
+		int result = futureTask.get(); // 在得到结果之前会阻塞在此
+		System.out.println("结果为：" + result);
+	}
+}
+
+
+class Task implements Callable<Integer>{
+
+	@Override
+	public Integer call() throws Exception {
+		System.out.println("进入 call");
+		Thread.sleep(1000);
+		int sum = 0;
+		for(int i = 0; i < 100000; i++) {
+			sum += i;
+		}
+		return sum;
+	}
+}
+```
+
+### 14.9 执行器
+|方法 |描述|
+|-|-|
+|newCachedThreadPool|必要时创建新线程，空闲线程会被保留 60 s|
+|newFixedThreadPool|该池包含固定的线程数量，空闲线程不会被取消|
+|newSingleThreadExecutor|只有一个线程池，该线程顺序执行每个任务|
+|newScheduledThreadPool|用于预定执行而构建的线程池，替代 java.util.Timer|
+|newSingleThreadScheduledExecutor|用于执行预定任务的单线程池|
+
+
+
+
+### 14.10 同步器
+|类|作用|何时使用
+|-|-|-|
+|CyclicBarrier|允许|？|
+|CountDownLatch|允许线程集等待，直到为 0 为止|主线程等多个子线程执行完成|
+|Exchanger|允许两个线程交换对象准备好时交换对象|当两个线程工作在同一数据结构的两个实例上时，一个向实例添加数据一个向实例清除数据|
+|Semaphore|线程等待直到被允许运行为止|限制访问资源的线程总数|
+|SynchronousQueue|允许线程把一个对象交给另一个对象|在没有显式同步的情况下，当两个线程准备好将一个对象从一个线程传递到另一个线程时|
+
+
+#### CountDownLatch
+使用 CountDownLatch，以下的例子是，首先 `CountDownLatch` 初始化为 5，然后五个子程完成任务时分别调用 CountDownLatch 实例的 CountDown 方法。主线程 await()，当五个子线程均 CountDown 之后，await 解除阻塞状态。
+```java
+package countDownLatchLearn;
+import java.util.concurrent.CountDownLatch;
+
+public class CountDownLaunchTest {
+
+	public static void main(String[] args) throws InterruptedException {
+		CountDownLatch countDownLatch = new CountDownLatch(5);
+		for(int i = 0; i < 5; i++) {
+			(new TestThread("" + i, countDownLatch)).start();
+		}
+		countDownLatch.await();// 等待，不必通过连续对五个线程依次 join
+		System.out.println("五个线程均结束");
+	}
+}
+
+class TestThread extends Thread{
+	CountDownLatch  countDownLatch;
+	String threadName;
+	public TestThread(String threadName, CountDownLatch  countDownLatch) {
+		this.countDownLatch = countDownLatch;
+		this.threadName = threadName;
+	}
+	@Override
+	public void run() {
+		System.out.println("线程 " + this.threadName + " finished");
+		this.countDownLatch.countDown();
+	}
+}
+```
+
+**好处**，如果不用 CountDownLatch 的话，那么到时候需要依次等待每个线程 join。
+
+
+#### CyclicBarrier
+[CyclicBarrier使用及应用场景例子](https://www.jianshu.com/p/4ef4bbf01811),总结起来 CyclicBarrier 就是约定很多个线程均到达一个时间点之后，触发另一个事件，同时各自继续执行各自的流程。
+
+#### Semaphore
+
+实现生产者消费者，
+```java
+package semaphoreLearn;
+
+import java.util.concurrent.Semaphore;
+/**
+ * 实现生产者消费者
+ * 生产者，如果满，那么不能添加，如果不满
+ * 消费者，如果空，那么不能取，如果存在资源，那么取
+ * buffer 区的操作是互斥的
+ * @author bupt632
+ *
+ */
+
+public class SemaphoreTest {
+
+	public static void main(String[] args) throws InterruptedException {
+		Semaphore sync = new Semaphore(1);  // 用来保证互斥
+		Semaphore full = new Semaphore(10); // 资源数为 10，当信号量为 0 时表示，资源池满
+		Semaphore empty = new Semaphore(0); // 资源数为 10，当信号量为 0 时表示，资源池空
+
+		Consumer consumer = new Consumer(sync, full, empty, 10);
+		Producter producter = new Producter(sync, full, empty, 20);
+
+		consumer.start();
+		producter.start();
+	}
+
+}
+
+class Consumer extends Thread{
+	private Semaphore sync;
+	private Semaphore full;
+	private Semaphore empty;
+	private int interval = 0;
+
+	public Consumer(Semaphore sync, Semaphore full, Semaphore empty, int interval) {
+		this.sync = sync;
+		this.full = full;
+		this.empty = empty;
+		this.interval = interval;
+	}
+
+	@Override
+	public void run() {
+		for(int i = 0; i < 1000; i++)
+		try {
+			// 消费者先检查资源池是否为空，为空，则阻塞
+			// 检查是否能够访问同步区
+			// 访问同步区，消费一个资源
+			// 释放一个满信号
+			// 释放同步信号
+			if(empty.availablePermits() == 0)
+				System.out.println("资源池为空");
+			empty.acquire();
+			sync.acquire(); // 互斥访问同步区
+			System.out.println("消费一个资源");
+			sync.release();
+			full.release();
+			Thread.sleep(interval);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}
+
+class Producter extends Thread{
+	private Semaphore sync;
+	private Semaphore full;
+	private Semaphore empty;
+	private int interval = 0;
+
+	public Producter(Semaphore sync, Semaphore full, Semaphore empty, int interval) {
+		this.sync = sync;
+		this.full = full;
+		this.empty = empty;
+		this.interval = interval;
+	}
+
+	@Override
+	public void run() {
+		for(int i = 0; i < 1000; i++)
+		try {
+			// 消费者先检查资源池是否为满，为满，则阻塞
+			// 检查是否能够访问同步区
+			// 访问同步区，放置一个资源
+			// 释放同步信号
+			// 释放一个空信号
+			if(full.availablePermits() == 0)
+				System.out.println("资源池已满");
+			full.acquire();
+			sync.acquire(); // 互斥访问同步区
+			System.out.println("添加一个资源");
+			sync.release();
+			empty.release();
+			Thread.sleep(interval);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+}
+```
+
+
 
