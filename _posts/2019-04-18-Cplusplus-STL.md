@@ -145,6 +145,8 @@ int main(){
     cout<<endl;
 }
 ```
+##### 使用心得
+1. 在刷题时，需要重排列表节点的顺序，想当然地将重载比较运算符的参数设置为指针，但是这样做会报错，因为运算符重载的参数只能是对象或者是枚举类型。
 
 ### 2. 关联容器
 关联容器主要分为 set 和 map 两种
@@ -162,12 +164,12 @@ int main(){
 - 不可以通过迭代器修改 key，可以修改 value
 - 底层通过 RB-tree 实现，几乎所有的 map 操作只是转调用 RB-tree 的操作行为
 
-#### hash_set
+#### unordered_set(原 hash_set)
 ##### 基本介绍
 - 底层用 hashtable 实现
 	- hashtable 使用二次探测法
 	- hashtable 使用拉链法解决冲突
 
-#### hash_map
+#### unordered_map(原 hash_map)
 ##### 基本介绍
 - 底层使用 hashtable 实现
