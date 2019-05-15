@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "regular-expression-matching"
+title:      "google guava"
 subtitle:   "Java编程的助手 - guava"
 date:       2019-05-15 11:11:11
 author:     "shihunyewu"
@@ -11,7 +11,7 @@ tags:
 ---
 > 使用像 Guava 这样的库远远好于自己写
 
-Guava 是 google 开发的一个 java 集合库，这些类库包含字符串、集合、并发、I/O 和 反射工具。Guava 类似于一个语法糖，让开发者的开发更便捷也更不容易在某些细节上出错。
+Guava 是 google 开发的一个 java 集合库，这些类库包含字符串、集合、并发、I/O 和 反射工具。Guava 封装了很多样板代码，让开发者的开发更便捷也更不容易在某些细节上出错。
 由于 Guava 是第三方库，因此使用之前需要下载。
 
 ## 第 2 章，基础的 Guava
