@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      "C++-STL"
-subtitle:   " \"C++ STL 的基本使用\""
+title:      "C++ STL Usage"
+subtitle:   "C++ STL 的基本使用"
 date:       2019-04-18 11:11:11
 author:     "shihunyewu"
 header-img: "img/post-bg-unix-linux.jpg"
@@ -11,7 +11,7 @@ tags:
 ---
 > 解开困扰自己已久的疑惑，更能满足自己的好奇心
 
-## C++ STL
+## C++ STL 容器
 ### 概述
 C++ STL 的容器分为两类，一类是序列式容器，一类是关联容器。
 ### 1. 序列容器
@@ -30,7 +30,8 @@ C++ STL 的容器分为两类，一类是序列式容器，一类是关联容器
 - rbegin(),rend(), 获取逆序开始迭代器和逆序结束迭代器
 - size(), 返回数组大小
 - empty(), 是否为空
-- insert(), 插入元素，可以在某一个位置插入单个元素的多个副本，可以接受其他容器的迭代器
+- insert(), 插入元素，可以在某一个位置插入单个元素的多个副本
+	- 可以接受其他容器的迭代器, insert(postion, other.begin(), other.end())
 - erase(), 删除指定位置的元素，指定范围的元素
 - [], 支持随机访问
 
@@ -50,6 +51,7 @@ C++ STL 的容器分为两类，一类是序列式容器，一类是关联容器
 - 支持随机访问
 	- 复杂度高于 vector
 	- 如果需要对 deque 排序，最好是将 deque 复制到 vector 中，排序后再复制回 deque
+
 #### stack
 ##### 基本介绍
 - 先进先出
@@ -61,6 +63,7 @@ C++ STL 的容器分为两类，一类是序列式容器，一类是关联容器
 - pop()
 - size()
 - top()
+	- top 指针总是指向相同位置，发生改变时，改变的是指针指向的位置的对象的内容
 - empty()
 
 
@@ -86,6 +89,8 @@ C++ STL 的容器分为两类，一类是序列式容器，一类是关联容器
 - 内部使用 vector 实现
 - 调整堆使用 heap 的相关算法
 - 可以自定义排序方式
+	- 基本类型，使用 grater<type> 和 less<type> 定义即可
+	- 复杂类型，需要重载 `<` 或者 `>` 运算符
 
 ##### 基本使用
 下面实例测试了基本类型建立小顶堆，复杂类型（struct 类型）建立大顶堆和小顶堆
@@ -153,8 +158,11 @@ int main(){
 #### set
 ##### 基本介绍
 - 会根据元素的键值自动排序
+- 没有重复元素
 - 不可以改变 set 值
 - 底层使用 RB-tree  实现
+##### 基本使用
+- find(value) 查找 vlaue
 
 ##### 常用方法介绍
 #### map
@@ -164,12 +172,30 @@ int main(){
 - 不可以通过迭代器修改 key，可以修改 value
 - 底层通过 RB-tree 实现，几乎所有的 map 操作只是转调用 RB-tree 的操作行为
 
+##### 基本使用
+- insert(make_pair(key, value))， 插入一个新值
+- [key] 返回 key 对应的 value
+- key_comp() 返回键集合
+- value_comp() 返回值集合
+- find(key) 查找 key，返回结果如果等于 end()，说明不存在
+- 迭代器访问
+	- `it->first` 得到 key 值
+	- `it->second` 得到 value 值
+
 #### unordered_set(原 hash_set)
 ##### 基本介绍
 - 底层用 hashtable 实现
 	- hashtable 使用二次探测法
 	- hashtable 使用拉链法解决冲突
+- 当不强调键有序时，可以考虑使用 unordered_set，而不是使用 set
 
 #### unordered_map(原 hash_map)
 ##### 基本介绍
 - 底层使用 hashtable 实现
+
+
+## C++ STL 算法
+算法模块一般包含在 Algorithm 头文件中，记录一下使用过的函数。
+##### for_each()
+##### sort()
+

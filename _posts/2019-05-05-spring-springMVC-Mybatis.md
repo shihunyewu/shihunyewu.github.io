@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      "Java-spring-springMVC-Mybatis"
-subtitle:   " \"Java ssm 框架\""
+title:      "Java spring springMVC mybatis redis"
+subtitle:   " \"Java ssm redis\""
 date:       2019-05-05 11:11:11
 author:     "shihunyewu"
 header-img: "img/post-bg-unix-linux.jpg"
