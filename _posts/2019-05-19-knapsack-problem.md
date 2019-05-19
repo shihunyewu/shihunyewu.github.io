@@ -91,6 +91,9 @@ class Solution {
     }
 }
 ```
+#### 思考
+总之上面这个题的核心思想就是将石头分成差不多大小的两堆，让其差别尽可能小。引申一下可以将石头堆分成 n 堆，让 n 堆之间的差别可能小。
+
 #### 参考
 1. [背包问题(0-1背包、完全背包、多重背包)详解](https://blog.csdn.net/huanghaocs/article/details/77920358)
 2. [1049. Last Stone Weight II](https://blog.csdn.net/zjucor/article/details/90341208)
