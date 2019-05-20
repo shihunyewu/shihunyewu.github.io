@@ -68,7 +68,7 @@ ga_domain: shihunyewu.me
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
-sidebar-about-description: "保持前进，<br>多听多看多学"
+sidebar-about-description: "小时不识月，<br>呼作白玉盘。"
 sidebar-avatar: /img/img_sgy.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
