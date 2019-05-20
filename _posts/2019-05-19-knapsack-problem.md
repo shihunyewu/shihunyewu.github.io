@@ -7,11 +7,11 @@ author:     "shihunyewu"
 header-img: "img/post-bg-unix-linux.jpg"
 catalog: false
 tags:
-    - LeetCode
+    - LEETCODE
     - Knapsack
 ---
 
-> 今天参加 LeetCode 周赛时，遇到一道难题，有大佬说是背包问题
+> 做题目不是最终目的，通过做题发现知识盲区，去研究学习，才能不断提高。
 
 ## 背包问题
 ### 01背包问题
