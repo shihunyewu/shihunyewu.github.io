@@ -8,6 +8,7 @@ header-img: "img/post-bg-unix-linux.jpg"
 catalog: false
 tags:
     - Java
+---
 
 ## 第 11 章 异常、断言、日志和调试
 [](何种错误使用返回值，何种错误应该捕获，何种错误应该直接作为返回值？)
