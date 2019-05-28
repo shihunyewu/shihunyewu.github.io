@@ -32,5 +32,19 @@ aa,bb,cc
 #### Splitter 类
 相当于 Joiner 的逆运算。可以在分割时去除空格，可以在分割字符串时指定键和值。
 
+#### Charsets 类
+里面封装了基本的字符集名，开发者不必再为记不清字符集名发愁了。
+
+
+#### Strings 类
+- Strings.padEnd(String origin, int n, char c)，向 origin 后面添加 n 个字符 c
+- Strings.padStart(String origin, int n, char c)，向 origin 前面添加 n 个字符 c
+- Strings.nullToEmpty(String object)，将 null 转换成 ""
+- Strings.emptyToNull(String object)，将 "" 转换成 null
+- Strings.isNullOrEmpty(String object),判断 object 是否是 null 或者是 ""
+
+### 第 4 章，集合类
+
+
 #### 参考书籍
 `<<Getting Started with Google Guava>>`
