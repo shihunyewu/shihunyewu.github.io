@@ -44,7 +44,45 @@ aa,bb,cc
 - Strings.isNullOrEmpty(String object),判断 object 是否是 null 或者是 ""
 
 ### 第 4 章，集合类
+#### Lists
+- Lists.newArrayList(object1, object2, object3,...); 将元素添加到新列表，返回列表
+- `List<List<T>> Lists.partition(list, k)`，将 list 等分成 k 份
 
+#### Sets
+java 原生 Set 不支持例如求并集、交集这样的集合操作，Sets 提供了相关的 api
+- Sets.difference(set1, set2)，求 set1 相对于 set2 的差集
+- Sets.symmetricDifference(set1, set2)，求两个集合相互差集的并集
+- Sets.intersection(set1, set2)，求两个集合的交集
+- Sets.union(s1, s2)，求两个集合的并集
+
+#### Multimaps
+允许相同键值存在多个 val
+##### ArrayListMultimap
+- 用 ArrayList 来保存 val 的 map
+- ArrayList 不强制要求 val 都是唯一的，可以重复
+- ArrayListMultimap 没有实现 Map 接口，如果想要将其变成 Map 类型，需要调用其 asMap() 方法
+
+##### HashMultimap
+- HashMultimap 基于哈希表，不支持相同的 (key,val)
+
+#### BiMap
+- 保持 val 是唯一的，使用 put 方法如果插入了相同的 val 时，会抛出异常
+	- 如果一定要插入的话，需要使用 forcePut 方法，将会删除原来的 key，替换成新的 key
+- biMap.inverse()，会将 biMap 中的 key 和 val 反转，key 变成  val，val 变成  key
+
+#### Table
+保存了 map 的 map，底层数据结构是 `Map<R, Map<K, V>>`
+- HashBasedTable<Integer,Integer,String> table = HashBasedTable.create(5,5);
+
+
+#### Range
+用来比较是否在某一区间，可以选择区间两端的开闭
+- open，全开区间
+- close，全闭区间
+- openClosed，半开半闭
+- closeOpen，半闭半开
+- ...
+对任意类型都可以使用区间，只要该类实现了 Comparable 接口。实际上现在 java8 的流式编程已经能够很好地处理这种情况了。
 
 #### 参考书籍
 `<<Getting Started with Google Guava>>`
