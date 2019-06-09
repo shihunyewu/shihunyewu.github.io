@@ -7,7 +7,7 @@ author:     "shihunyewu"
 header-img: "img/post-bg-unix-linux.jpg"
 catalog: false
 tags:
-    - spring
+    - Spring
 ---
 ## spring bean 的生命周期
 
