@@ -2,7 +2,7 @@
 layout:     post
 title:      "spring bean lifetime"
 subtitle:   " \" spring bean 的生命周期 \""
-date:       2019-05-30 11:11:11
+date:       2019-06-02 11:11:11
 author:     "shihunyewu"
 header-img: "img/post-bg-unix-linux.jpg"
 catalog: false
