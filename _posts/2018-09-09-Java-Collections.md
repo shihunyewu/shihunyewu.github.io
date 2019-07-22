@@ -194,7 +194,44 @@ private void writeObject(java.io.ObjectOutputStream s)
 - hashMap 不允许存在相同的 (key, value) 组合存在
 - 每个 hash 值对应的链表长度如果超过 TREEFY_THRESHOLD 将会把链表重构为红黑树
 - 当还是链表时，插入新元素使用尾插法
-- 最后两个参数的含义还未搞懂
+- putVal 方法的 onlyIfAbsent 参数表明是否将 hashMap 中已经存在的值替换成相同的新值，如果 false，那么将每次 (key, value) 更新旧 key 的 value，否则不会更新。案例如下
+```java
+package MapLearn;
+import java.util.HashMap;
+public class HashMapPutIfAbsent {
+	public static void main(String[] args) {
+		HashMap<String, Object> hashMap = new HashMap<>();
+        Object obj = hashMap.putIfAbsent("A", null);
+        if (obj == null) {
+            System.out.println("Shit : NPE!");
+        }
+        // 如果存在，那么不会将新值更新旧值，一直维护第一次插入的值
+        hashMap.putIfAbsent("A",16);
+        hashMap.putIfAbsent("A",17);
+        hashMap.putIfAbsent("B", 100);
+        hashMap.putIfAbsent("B", 150);
+
+        // put 直接用新值更新旧值
+//        hashMap.put("A", 16);
+//        hashMap.put("A", 17);
+//        hashMap.put("B", 100);
+//        hashMap.put("B", 150);
+
+        Integer i = (Integer)hashMap.putIfAbsent("B", 200);
+        hashMap.put("C", 222);
+        hashMap.put("C", 23);
+        System.out.println(hashMap);
+        System.out.println(i);
+	}
+}
+```
+其中 `putIfAbsent(key, value)` 的底层代码为:
+```java
+    @Override
+    public V putIfAbsent(K key, V value) {
+        return putVal(hash(key), key, value, true, true); // 将 onlyIFAbsent 置为 true
+    }
+```
 
 ### TreeMap
 #### 常用成员函数
