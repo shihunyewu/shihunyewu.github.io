@@ -310,6 +310,11 @@ caught    java.lang.RuntimeException
 * 不安装默认处理器
     默认的处理器为空，不为独立的线程安装处理器，此时的处理器就是该线程的 ThreadGroup 对象。但是不推荐使用
 
+* 在线程的 run 方法中只能主动抛出 RuntimeException，而不能抛出其他异常
+    * 因为 RuntimeException 异常是运行时异常的超类，常见的 RuntimeException 包括 nullpointException 和 ArrayIndexOutOfBoundsException，他们都是 unchecked 的，不需要try...catch...或throws 机制去处理的异常。
+    * [参考](https://www.cnblogs.com/jtlgb/p/5985120.html)
+
+
 ### 14.5 同步
 两个线程并发地修改同一个对象的状态，这就引起了竞争条件，引起了竞争就会使得对象的状态出现问题，最常见的一个例子就是多个线程并发对一个变量加 1。如下
 ```java
