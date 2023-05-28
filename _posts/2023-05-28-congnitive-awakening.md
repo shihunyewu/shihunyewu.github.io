@@ -2,7 +2,7 @@
 layout:     post
 title:      "congnitive awakening"
 subtitle:   " 认知觉醒 "
-date:       2023-05-28 11:11:11
+date:       2023-05-27 11:11:11
 author:     "shihunyewu"
 header-img: "img/post-bg-unix-linux.jpg"
 catalog: false
